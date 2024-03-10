@@ -1,83 +1,67 @@
-# mdformat-plugin
+# mdformat-gfm-alerts
 
-[![Build Status][ci-badge]][ci-link]
-[![codecov.io][cov-badge]][cov-link]
-[![PyPI version][pypi-badge]][pypi-link]
+[![Build Status][ci-badge]][ci-link] [![PyPI version][pypi-badge]][pypi-link]
 
-An [mdformat](https://github.com/executablebooks/mdformat) plugin for...
+<!-- [![codecov.io][cov-badge]][cov-link]
+[cov-badge]: https://codecov.io/gh/executablebooks/mdformat-gfm-alerts/branch/main/graph/badge.svg
+[cov-link]: https://codecov.io/gh/executablebooks/mdformat-gfm-alerts
+ -->
 
-## Required changes for a new plugin
+An [mdformat](https://github.com/executablebooks/mdformat) plugin for [GitHub "Alerts"](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax#alerts). "Alerts" are a block quote variation of admonitions that were proposed in this [community discussion](https://github.com/orgs/community/discussions/16925) and are currently a separate extension of the [GFM (GitHub-Flavored Markdown) syntax](https://github.github.com/gfm).
 
-This demonstration is setup with a plugin named `plugin`.
-There are a number of locations to change.
-At a top level for a plugin `foo` at least the following changes are required
+## `mdformat` Usage
 
-- Global find and replace `mdformat_plugin` to `mdformat_foo` including folder names.
-- Global find and replace `mdformat-plugin` to `mdformat-foo` including folder names.
-- `tests/test_fixtures.py`: `output = mdformat.text(text, extensions={"plugin"})` becomes `output = mdformat.text(text, extensions={"foo"})`
-- `pyproject.toml` in addition to the global find and replace: `plugin = "mdformat_plugin"` becomes `foo = "mdformat_foo"`
+Add this package wherever you use `mdformat` and the plugin will be auto-recognized. No additional configuration necessary. See [additional information on `mdformat` plugins here](https://mdformat.readthedocs.io/en/stable/users/plugins.html)
 
-Do not forget to update authorship / maintainers in `pyproject.toml` as well.
+### Pre-Commit
 
-## Development
-
-This package utilises [flit](https://flit.readthedocs.io) as the build engine, and [tox](https://tox.readthedocs.io) for test automation.
-
-To install these development dependencies:
-
-```bash
-pip install tox
+```yaml
+repos:
+  - repo: https://github.com/executablebooks/mdformat
+    rev: 0.7.16
+    hooks:
+      - id: mdformat
+        additional_dependencies:
+          - mdformat-gfm-alerts
 ```
 
-To run the tests:
+### pipx
 
-```bash
-tox
+```sh
+pipx install mdformat
+pipx inject mdformat mdformat-gfm-alerts
 ```
 
-and with test coverage:
+## HTML Rendering
 
-```bash
-tox -e py37-cov
+To generate HTML output, `gfm_alerts_plugin` can be imported from `mdit_plugins`. For more guidance on `MarkdownIt`, see the docs: <https://markdown-it-py.readthedocs.io/en/latest/using.html#the-parser>
+
+```py
+from markdown_it import MarkdownIt
+
+from mdformat_gfm_alerts.mdit_plugins import gfm_alerts_plugin
+
+md = MarkdownIt()
+md.use(gfm_alerts_plugin)
+
+text = "> [!NOTE]\n> Useful information that users should know, even when skimming content. "
+md.render(text)
+# <blockquote>
+# <div class="markdown-alert markdown-alert-note">
+# <p class="markdown-alert-title">Note</p>
+# <p>Useful information that users should know, even when skimming content.</p>
+# </div>
+# </blockquote>
 ```
 
-The easiest way to write tests, is to edit tests/fixtures.md
+> [!WARNING]
+> This package does not properly handle replacing the `blockquote` outer `div` with a `div` for accessibility. This should be possible with `markdown-it`, but I haven't yet found a way.
 
-To run the code formatting and style checks:
+## Contributing
 
-```bash
-tox -e py37-pre-commit
-```
+See [CONTRIBUTING.md](https://github.com/KyleKing/mdformat-gfm-alerts/blob/main/CONTRIBUTING.md)
 
-or directly
-
-```bash
-pip install pre-commit
-pre-commit run --all
-```
-
-To run the pre-commit hook test:
-
-```bash
-tox -e py37-hook
-```
-
-## Publish to PyPi
-
-Either use flit directly:
-
-```bash
-pip install flit
-flit publish
-```
-
-or trigger the GitHub Action job, by creating a release with a tag equal to the version, e.g. `v0.0.1`.
-
-Note, this requires generating an API key on PyPi and adding it to the repository `Settings/Secrets`, under the name `PYPI_KEY`.
-
-[ci-badge]: https://github.com/executablebooks/mdformat-plugin/workflows/CI/badge.svg?branch=master
-[ci-link]: https://github.com/executablebooks/mdformat/actions?query=workflow%3ACI+branch%3Amaster+event%3Apush
-[cov-badge]: https://codecov.io/gh/executablebooks/mdformat-plugin/branch/master/graph/badge.svg
-[cov-link]: https://codecov.io/gh/executablebooks/mdformat-plugin
-[pypi-badge]: https://img.shields.io/pypi/v/mdformat-plugin.svg
-[pypi-link]: https://pypi.org/project/mdformat-plugin
+[ci-badge]: https://github.com/kyleking/mdformat-gfm-alerts/workflows/CI/badge.svg?branch=main
+[ci-link]: https://github.com/kyleking/mdformat-gfm-alerts/actions?query=workflow%3ACI+branch%3Amain+event%3Apush
+[pypi-badge]: https://img.shields.io/pypi/v/mdformat-gfm-alerts.svg
+[pypi-link]: https://pypi.org/project/mdformat-gfm-alerts
