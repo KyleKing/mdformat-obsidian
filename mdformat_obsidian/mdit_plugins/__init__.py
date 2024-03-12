@@ -1,2 +1,6 @@
-from ._gfm_alert import INLINE_SEP, format_gfm_alert_markup, gfm_alert_plugin
-from ._gfm_alert import PREFIX as GFM_ALERT_PREFIX
+from ._obsidian_callouts import (
+    INLINE_SEP,
+    OBSIDIAN_CALLOUT_PREFIX,
+    format_obsidian_callout_markup,
+    obsidian_callout_plugin,
+)

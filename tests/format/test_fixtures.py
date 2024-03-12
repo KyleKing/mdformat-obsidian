@@ -16,6 +16,6 @@ fixtures = read_fixture_file(FIXTURE_PATH)
     ids=[f[1] for f in fixtures],
 )
 def test_fixtures(line, title, text, expected):
-    output = mdformat.text(text, extensions={"gfm_alerts"})
+    output = mdformat.text(text, extensions={"obsidian"})
     print_text(output, expected)
     assert output.rstrip() == expected.rstrip()

@@ -1,4 +1,9 @@
-"""GitHub Alerts."""
+"""Logic Factories.
+
+Adapted from the implementation for `mdformat-gfm-alerts`:
+<https://github.com/KyleKing/mdformat-gfm-alerts/blob/a6e71db4da3a421320e75b8a9e3e3cb2dca429d7/mdformat_gfm_alerts/factories/_gfm_blockquote_factories.py>
+
+"""
 
 from __future__ import annotations
 
@@ -14,9 +19,6 @@ from mdit_py_plugins.utils import is_code_block
 if TYPE_CHECKING:
     from markdown_it.token import Token
 
-PREFIX = "gfm_alert"
-"""Prefix used to differentiate the parsed output."""
-
 
 # FYI: copied from mdformat_admon.factories
 @contextmanager
@@ -26,26 +28,27 @@ def new_token(state: StateBlock, name: str, kind: str) -> Generator[Token, None,
     state.push(f"{name}_close", kind, -1)
 
 
-# FYI: Adapted from mdformat_admon.factories._factories
-class AlertState(NamedTuple):
+# FYI: Adapted from mdformat_admon.factories
+class CalloutState(NamedTuple):
     """Frozen state."""
 
     parentType: str
     lineMax: int
 
 
-class AlertData(NamedTuple):
-    """AlertData data for rendering."""
+class CalloutData(NamedTuple):
+    """CalloutData data for rendering."""
 
-    old_state: AlertState
+    old_state: CalloutState
     meta_text: str
-    inline_content: str
+    custom_title: str
     next_line: int
 
 
 def parse_possible_blockquote_admon_factory(
+    prefix: str,
     patterns: set[str],
-) -> Callable[[StateBlock, int, int, bool], AlertData | bool]:
+) -> Callable[[StateBlock, int, int, bool], CalloutData | bool]:
     """Generate the parser function.
 
     Accepts set of strings that will be compiled into regular expressions.
@@ -58,7 +61,7 @@ def parse_possible_blockquote_admon_factory(
         start_line: int,
         end_line: int,
         silent: bool,
-    ) -> AlertData | bool:
+    ) -> CalloutData | bool:
         if is_code_block(state, start_line):
             return False
 
@@ -67,7 +70,7 @@ def parse_possible_blockquote_admon_factory(
         # Exit if no match for any pattern
         text = state.src[start:]
         regexes = [
-            re.compile(rf"{pat}(?P<inline_content>(?: |<br>)[^\n]+)?", re.IGNORECASE)
+            re.compile(rf"{pat}(?P<custom_title>(?: |<br>)[^\n]+)?", re.IGNORECASE)
             for pat in patterns
         ]
         match = next((_m for rx in regexes if (_m := rx.match(text))), None)
@@ -78,29 +81,29 @@ def parse_possible_blockquote_admon_factory(
         if silent:
             return True
 
-        old_state = AlertState(
+        old_state = CalloutState(
             parentType=state.parentType,
             lineMax=state.lineMax,
         )
-        state.parentType = "gfm_alert"
+        state.parentType = prefix
 
-        return AlertData(
+        return CalloutData(
             old_state=old_state,
             meta_text=match["title"],
-            inline_content=match["inline_content"] or "",
+            custom_title=match["custom_title"] or "",
             next_line=end_line,
         )
 
     return parse_possible_blockquote_admon
 
 
-def gfm_alert_plugin_factory(
+def obsidian_callout_plugin_factory(
     prefix: str,
     logic: Callable[[StateBlock, int, int, bool], bool],
 ) -> Callable[[MarkdownIt], None]:
     """Generate the plugin function."""
 
-    def gfm_alert_plugin(md: MarkdownIt) -> None:
+    def obsidian_callout_plugin(md: MarkdownIt) -> None:
         md.block.ruler.before("blockquote", prefix, logic)
 
-    return gfm_alert_plugin
+    return obsidian_callout_plugin

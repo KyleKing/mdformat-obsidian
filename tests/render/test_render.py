@@ -4,7 +4,7 @@ import pytest
 from markdown_it import MarkdownIt
 from markdown_it.utils import read_fixture_file
 
-from mdformat_gfm_alerts.mdit_plugins import gfm_alert_plugin
+from mdformat_obsidian.mdit_plugins import obsidian_callout_plugin
 
 from ..helpers import print_text
 
@@ -18,7 +18,7 @@ def with_plugin(filename, plugins):
 @pytest.mark.parametrize(
     ("line", "title", "text", "expected", "plugins"),
     [
-        *with_plugin("gfm_alerts.md", [gfm_alert_plugin]),
+        *with_plugin("obsidian.md", [obsidian_callout_plugin]),
     ],
 )
 def test_render(line, title, text, expected, plugins):

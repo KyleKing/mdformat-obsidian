@@ -1,4 +1,4 @@
-"""An mdformat plugin for `gfm_alerts`."""
+"""An mdformat plugin for `obsidian`."""
 
 __version__ = "0.0.1"
 
