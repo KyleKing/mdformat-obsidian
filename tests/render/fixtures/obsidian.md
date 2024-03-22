@@ -24,11 +24,10 @@ Foldable Callouts
 <div data-callout-metadata="" data-callout-fold="-" data-callout="faq" class="callout is-collapsible is-collapsed">
 <div class="callout-title">
 <div class="callout-title-inner">Are callouts foldable?</div>
-<div class="callout-fold is-collapsed">
-</div>
+<div class="callout-fold is-collapsed"></div>
 </div>
 <div class="callout-content" style="display: none;">
-<p>Yes! In a foldable callout, the contents are hidden when collapsed.</p>
+<p>Yes! In a foldable callout, the contents are hidden when the callout is collapsed.</p>
 </div>
 </div>
 </blockquote>
@@ -56,10 +55,6 @@ Nested Callouts
 <div data-callout-metadata="" data-callout-fold="" data-callout="example" class="callout">
 <div class="callout-title">
 <div class="callout-title-inner"> You can even use multiple layers of nesting.</div>
-</div>
-</div>
-</div>
-</blockquote>
 </div>
 </div>
 </div>

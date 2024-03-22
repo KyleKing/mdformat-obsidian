@@ -41,6 +41,7 @@ class CalloutData(NamedTuple):
 
     old_state: CalloutState
     meta_text: str
+    folded: bool
     custom_title: str
     next_line: int
 
@@ -52,7 +53,7 @@ def parse_possible_blockquote_admon_factory(
     """Generate the parser function.
 
     Accepts set of strings that will be compiled into regular expressions.
-    They must have a capture group `title`.
+    They must have a capture group `title` and optional group `folded`.
 
     """
 
@@ -90,6 +91,7 @@ def parse_possible_blockquote_admon_factory(
         return CalloutData(
             old_state=old_state,
             meta_text=match["title"],
+            folded=bool(match["folded"]),
             custom_title=match["custom_title"] or "",
             next_line=end_line,
         )

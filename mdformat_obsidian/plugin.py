@@ -32,11 +32,23 @@ def _no_render(
     return ""
 
 
+def _recursive_render(
+    node: RenderTreeNode,
+    context: RenderContext,
+) -> str:
+    elements = [render for child in node.children if (render := child.render(context))]
+    # Do not separate the title line from the first row
+    return "\n\n".join(elements).rstrip()
+
+
 # A mapping from syntax tree node type to a function that renders it.
 # This can be used to overwrite renderer functions of existing syntax
 # or add support for new syntax.
 RENDERERS: Mapping[str, Render] = {
     OBSIDIAN_CALLOUT_PREFIX: _render_obsidian_callout,
     f"{OBSIDIAN_CALLOUT_PREFIX}_title": _no_render,
-    f"{OBSIDIAN_CALLOUT_PREFIX}_inline": _no_render,
+    f"{OBSIDIAN_CALLOUT_PREFIX}_title_inner": _no_render,
+    # PLANNED: can I add divs without introducing new blocks?
+    f"{OBSIDIAN_CALLOUT_PREFIX}_collapsed": _no_render,
+    f"{OBSIDIAN_CALLOUT_PREFIX}_content": _recursive_render,
 }
