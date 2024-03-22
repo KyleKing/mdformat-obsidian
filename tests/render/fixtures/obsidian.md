@@ -14,3 +14,58 @@ Custom Titles
 </div>
 </blockquote>
 .
+
+Foldable Callouts
+.
+> [!faq]- Are callouts foldable?
+> Yes! In a foldable callout, the contents are hidden when the callout is collapsed.
+.
+<blockquote>
+<div data-callout-metadata="" data-callout-fold="-" data-callout="faq" class="callout is-collapsible is-collapsed">
+<div class="callout-title">
+<div class="callout-title-inner">Are callouts foldable?</div>
+<div class="callout-fold is-collapsed">
+</div>
+</div>
+<div class="callout-content" style="display: none;">
+<p>Yes! In a foldable callout, the contents are hidden when collapsed.</p>
+</div>
+</div>
+</blockquote>
+.
+
+Nested Callouts
+.
+> [!question] Can callouts be nested?
+> > [!todo] Yes!, they can.
+> > > [!example]  You can even use multiple layers of nesting.
+.
+<blockquote>
+<div data-callout-metadata="" data-callout-fold="" data-callout="question" class="callout">
+<div class="callout-title">
+<div class="callout-title-inner">Can callouts be nested?</div>
+</div>
+<blockquote>
+<div class="callout-content">
+<div data-callout-metadata="" data-callout-fold="" data-callout="todo" class="callout">
+<div class="callout-title">
+<div class="callout-title-inner">Yes!, they can.</div>
+</div>
+<blockquote>
+<div class="callout-content">
+<div data-callout-metadata="" data-callout-fold="" data-callout="example" class="callout">
+<div class="callout-title">
+<div class="callout-title-inner"> You can even use multiple layers of nesting.</div>
+</div>
+</div>
+</div>
+</blockquote>
+</div>
+</div>
+</div>
+</blockquote>
+</div>
+</div>
+</div>
+</blockquote>
+.
