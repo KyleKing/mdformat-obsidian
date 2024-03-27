@@ -44,22 +44,24 @@ Nested Callouts
 <div class="callout-title">
 <div class="callout-title-inner">Can callouts be nested?</div>
 </div>
-<blockquote>
 <div class="callout-content">
+<blockquote>
 <div data-callout-metadata="" data-callout-fold="" data-callout="todo" class="callout">
 <div class="callout-title">
 <div class="callout-title-inner">Yes!, they can.</div>
 </div>
-<blockquote>
 <div class="callout-content">
+<blockquote>
 <div data-callout-metadata="" data-callout-fold="" data-callout="example" class="callout">
 <div class="callout-title">
-<div class="callout-title-inner"> You can even use multiple layers of nesting.</div>
+<div class="callout-title-inner">You can even use multiple layers of nesting.</div>
 </div>
-</div>
+<div class="callout-content"></div>
 </div>
 </blockquote>
 </div>
+</div>
+</blockquote>
 </div>
 </div>
 </blockquote>

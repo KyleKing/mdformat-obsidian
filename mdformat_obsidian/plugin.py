@@ -48,7 +48,7 @@ RENDERERS: Mapping[str, Render] = {
     OBSIDIAN_CALLOUT_PREFIX: _render_obsidian_callout,
     f"{OBSIDIAN_CALLOUT_PREFIX}_title": _no_render,
     f"{OBSIDIAN_CALLOUT_PREFIX}_title_inner": _no_render,
-    # PLANNED: can I add divs without introducing new blocks?
     f"{OBSIDIAN_CALLOUT_PREFIX}_collapsed": _no_render,
+    # FIXME: can I add divs without introducing new blocks?
     f"{OBSIDIAN_CALLOUT_PREFIX}_content": _recursive_render,
 }

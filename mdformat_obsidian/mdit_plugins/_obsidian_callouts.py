@@ -46,7 +46,7 @@ def format_obsidian_callout_markup(
         }
         if admonition.folded:
             token.attrs["data-callout-fold"] = "-"
-            token.attrs["class"] += " is-collapsible is-collapsed"
+            token.attrs["class"] = "callout is-collapsible is-collapsed"
         token.block = True
         token.map = [start_line, admonition.next_line]
         token.markup = title_line
@@ -68,7 +68,7 @@ def format_obsidian_callout_markup(
         with new_token(state, content, "div") as tkn_content:
             tkn_content.attrs = {"class": "callout-content"}
             if admonition.folded:
-                tkn_content.style = "display: none;"
+                tkn_content.attrs["style"] = "display: none;"
 
             state.md.block.tokenize(state, start_line + 1, admonition.next_line)
 
