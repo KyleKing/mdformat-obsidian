@@ -64,6 +64,9 @@ jobs:
     needs: [pre-commit, tests, pre-commit-hook]
     if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
     runs-on: ubuntu-latest
+    # Fix 403 error (https://github.com/softprops/action-gh-release/issues/400)
+    permissions:
+      contents: write
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
