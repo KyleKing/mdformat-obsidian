@@ -1,53 +1,58 @@
 [build-system]
-requires = ["flit_core >=3.2.0,<4"]
 build-backend = "flit_core.buildapi"
+requires = ["flit_core >=3.2.0,<4"]
 
 [project]
-name = "mdformat_obsidian"
 authors = [
-    { name = "Kyle King", email = "dev.act.kyle@gmail.com" },
+  {email = "dev.act.kyle@gmail.com", name = "kyleking"},
 ]
-readme = "README.md"
 classifiers = [
-    "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3",
-    "Topic :: Software Development :: Libraries :: Python Modules",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-keywords = ["mdformat", "markdown", "markdown-it"]
-requires-python = ">=3.8.0"
 dependencies = [
-    "mdformat >= 0.7.16",
-    "mdformat-footnote >= 0.1.1",
-    "mdformat-frontmatter >= 2.0.8",
-    "mdformat-gfm >= 0.3.6",
-    "mdformat-simple-breaks >= 0.0.1",
-    "mdformat-tables >= 0.4.1",
-    "mdformat-wikilink >= 0.2.0",
-    "mdit-py-plugins >= 0.4.0",
+  "mdformat >= 0.7.16",
+  "mdformat-footnote >= 0.1.1",
+  "mdformat-frontmatter >= 2.0.8",
+  "mdformat-gfm >= 0.3.6",
+  "mdformat-simple-breaks >= 0.0.1",
+  "mdformat-tables >= 0.4.1",
+  "mdformat-wikilink >= 0.2.0",
+  "mdit-py-plugins >= 0.4.0",
 ]
-dynamic = ["version", "description"]
-
-[project.optional-dependencies]
-test = [
-    "pytest >= 7.4.4",
-    "pytest-cov >= 4.1.0",
-]
-dev = ["pre-commit"]
-
-[project.urls]
-Homepage = "https://github.com/KyleKing/mdformat-obsidian"
+dynamic = ["description", "version"]
+keywords = ["markdown", "markdown-it", "mdformat"]
+name = "mdformat_obsidian"
+readme = "README.md"
+requires-python = ">=3.8.0"
 
 [project.entry-points."mdformat.parser_extension"]
 obsidian = "mdformat_obsidian"
 
+[project.optional-dependencies]
+dev = ["pre-commit"]
+test = [
+  "pytest >= 7.4.4",
+  "pytest-cov >= 4.1.0",
+]
+
+[project.urls]
+homepage = "https://github.com/kyleking/mdformat-obsidian"
+
 [tool.flit.sdist]
-include = []
 exclude = [".github/", "tests/"]
+include = []
 
 [tool.pytest-watcher]
+ignore_patterns = []
 now = true
+patterns = ["*.md", "*.py"]
 runner = "tox"
 runner_args = ["-e", "py38"]
-patterns = ["*.py", "*.md"]
-ignore_patterns = []
+
+[tool.tomlsort]
+all = true
+in_place = true
+trailing_comma_inline_array = true

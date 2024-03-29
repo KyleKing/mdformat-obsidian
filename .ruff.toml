@@ -45,7 +45,7 @@ unfixable = [
 inline-quotes = 'double'
 
 [lint.isort]
-known-first-party = ['mdformat_gfm_alerts']
+known-first-party = ['mdformat_obsidian']
 
 [lint.per-file-ignores]
 '__init__.py' = [
