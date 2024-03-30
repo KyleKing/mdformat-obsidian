@@ -35,6 +35,7 @@ obsidian = "mdformat_obsidian"
 dev = ["pre-commit"]
 test = [
   "pytest >= 7.4.4",
+  "pytest-beartype >= 0.0.2",
   "pytest-cov >= 4.1.0",
 ]
 
@@ -50,7 +51,7 @@ ignore_patterns = []
 now = true
 patterns = ["*.md", "*.py"]
 runner = "tox"
-runner_args = ["-e", "py38"]
+runner_args = ["-e", "py38-beartype"]
 
 [tool.tomlsort]
 all = true
