@@ -16,6 +16,18 @@ An [mdformat](https://github.com/executablebooks/mdformat) plugin for [Obsidian 
 
 Add this package wherever you use `mdformat` and the plugin will be auto-recognized. No additional configuration necessary. See [additional information on `mdformat` plugins here](https://mdformat.readthedocs.io/en/stable/users/plugins.html)
 
+**Tip**: this package specifies an "extra" (`'recommended'`) for plugins that work well with `GFM`:
+
+- [mdformat-beautysh](https://pypi.org/project/mdformat-beautysh)
+- [mdformat-black](https://pypi.org/project/mdformat-black)
+- [mdformat-config](https://pypi.org/project/mdformat-config)
+- [mdformat-footnote](https://pypi.org/project/mdformat-footnote)
+- [mdformat-frontmatter](https://pypi.org/project/mdformat-frontmatter)
+- [mdformat-simple-breaks](https://pypi.org/project/mdformat-simple-breaks)
+- [mdformat-tables](https://pypi.org/project/mdformat-tables)
+- [mdformat-web](https://pypi.org/project/mdformat-web)
+- [mdformat-wikilink](https://github.com/tmr232/mdformat-wikilink)
+
 ### Pre-Commit
 
 ```yaml
@@ -26,6 +38,8 @@ repos:
       - id: mdformat
         additional_dependencies:
           - mdformat-obsidian
+          # Or
+          # - "mdformat-obsidian[recommended]"
 ```
 
 ### pipx
@@ -33,6 +47,8 @@ repos:
 ```sh
 pipx install mdformat
 pipx inject mdformat mdformat-obsidian
+# Or
+# pipx inject mdformat "mdformat-obsidian[recommended]"
 ```
 
 ## HTML Rendering
