@@ -17,13 +17,8 @@ OBSIDIAN_CALLOUT_PREFIX = "obsidian_callout"
 INLINE_SEP = "\n\n"
 """Optional separator to differentiate the title and ineline content (if present)."""
 
-PATTERNS = {
-    # Note '> ' prefix is removed when parsing
-    r"^\*\*(?P<title>Note|Warning)\*\*",
-    # FYI: Unlike GitHub Alerts, Obsidian doesn't constrain the possible types
-    r"^\\?\[!(?P<title>[^\]]+)\\?\](?P<fold>[\-\+]?)",
-}
-"""Regular expressions to match Obsidian Alerts."""
+PATTERN = r"^\\?\[!(?P<title>[^\]]+)\\?\](?P<fold>[\-\+]?)"
+"""Regular expression to match Obsidian Alerts."""
 
 
 def format_obsidian_callout_markup(
@@ -90,7 +85,7 @@ def alert_logic(
     """Parse Obsidian Alerts."""
     parser_func = parse_possible_blockquote_admon_factory(
         OBSIDIAN_CALLOUT_PREFIX,
-        PATTERNS,
+        {PATTERN},
     )
     result = parser_func(state, startLine, endLine, silent)
     if isinstance(result, CalloutData):
