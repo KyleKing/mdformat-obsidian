@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Generator
-from contextlib import contextmanager
+from contextlib import contextmanager, suppress
 from typing import TYPE_CHECKING, Callable, NamedTuple
 
 from markdown_it import MarkdownIt
@@ -88,10 +88,13 @@ def parse_possible_blockquote_admon_factory(
         )
         state.parentType = prefix
 
+        folded = False
+        with suppress(IndexError):
+            folded = bool(match["folded"])
         return CalloutData(
             old_state=old_state,
             meta_text=match["title"],
-            folded=bool(match["folded"]),
+            folded=folded,
             custom_title=match["custom_title"] or "",
             next_line=end_line,
         )

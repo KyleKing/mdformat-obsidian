@@ -53,3 +53,10 @@ Custom Types
 > [!CUSTOM-QUESTION-TYPE]
 > The value of the data-callout attribute is the type identifier you want to use, for example `[!custom-question-type]`.
 .
+
+Don't crash on incomplete alert (https://github.com/KyleKing/mdformat-obsidian/issues/5)
+.
+> **NOTE**
+.
+> [!NOTE]
+.
