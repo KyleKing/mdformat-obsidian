@@ -25,12 +25,18 @@ Title-only Callout
 > [!TIP] Title-only callout
 .
 
-Foldable Callout
+Foldable Callout. Support both - and +
 .
 > [!faq]- Are callouts foldable?
 > Yes! In a foldable callout, the contents are hidden when the callout is collapsed.
+
+> [!faq]+ Are callouts foldable?
+> Yes! In a foldable callout, the contents are hidden when the callout is collapsed.
 .
 > [!FAQ]- Are callouts foldable?
+> Yes! In a foldable callout, the contents are hidden when the callout is collapsed.
+
+> [!FAQ]+ Are callouts foldable?
 > Yes! In a foldable callout, the contents are hidden when the callout is collapsed.
 .
 

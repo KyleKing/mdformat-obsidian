@@ -41,7 +41,7 @@ class CalloutData(NamedTuple):
 
     old_state: CalloutState
     meta_text: str
-    folded: bool
+    fold: str
     custom_title: str
     next_line: int
 
@@ -88,13 +88,13 @@ def parse_possible_blockquote_admon_factory(
         )
         state.parentType = prefix
 
-        folded = False
+        fold = ""
         with suppress(IndexError):
-            folded = bool(match["folded"])
+            fold = match["fold"]
         return CalloutData(
             old_state=old_state,
             meta_text=match["title"],
-            folded=folded,
+            fold=fold,
             custom_title=match["custom_title"] or "",
             next_line=end_line,
         )

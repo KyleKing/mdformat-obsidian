@@ -21,9 +21,9 @@ PATTERNS = {
     # Note '> ' prefix is removed when parsing
     r"^\*\*(?P<title>Note|Warning)\*\*",
     # FYI: Unlike GitHub Alerts, Obsidian doesn't constrain the possible types
-    r"^\\?\[!(?P<title>[^\]]+)\\?\](?P<folded>-?)",
+    r"^\\?\[!(?P<title>[^\]]+)\\?\](?P<fold>[\-\+]?)",
 }
-"""Patterns specific to GitHub Alerts."""
+"""Regular expressions to match Obsidian Alerts."""
 
 
 def format_obsidian_callout_markup(
@@ -33,9 +33,9 @@ def format_obsidian_callout_markup(
 ) -> None:
     """Format markup."""
     tag = admonition.meta_text.upper()
-    fold = "-" if admonition.folded else ""
+    folded = bool(admonition.fold)
     custom_title = admonition.custom_title
-    title_line = f"[!{tag}]{fold}{INLINE_SEP}{custom_title}"
+    title_line = f"[!{tag}]{admonition.fold}{INLINE_SEP}{custom_title}"
 
     with new_token(state, OBSIDIAN_CALLOUT_PREFIX, "div") as token:
         token.attrs = {
@@ -44,7 +44,7 @@ def format_obsidian_callout_markup(
             "data-callout": admonition.meta_text.lower(),
             "class": "callout",
         }
-        if admonition.folded:
+        if folded:
             token.attrs["data-callout-fold"] = "-"
             token.attrs["class"] = "callout is-collapsible is-collapsed"
         token.block = True
@@ -59,7 +59,7 @@ def format_obsidian_callout_markup(
 
                 tkn_title_txt = state.push("inline", "", 0)
                 tkn_title_txt.content = admonition.custom_title.strip()
-            if admonition.folded:
+            if folded:
                 collapsed = f"{OBSIDIAN_CALLOUT_PREFIX}_collapsed"
                 with new_token(state, collapsed, "div") as tkn_collapsed:
                     tkn_collapsed.attrs = {"class": "callout-fold is-collapsed"}
@@ -67,7 +67,7 @@ def format_obsidian_callout_markup(
         content = f"{OBSIDIAN_CALLOUT_PREFIX}_content"
         with new_token(state, content, "div") as tkn_content:
             tkn_content.attrs = {"class": "callout-content"}
-            if admonition.folded:
+            if folded:
                 tkn_content.attrs["style"] = "display: none;"
 
             state.md.block.tokenize(state, start_line + 1, admonition.next_line)
@@ -87,7 +87,7 @@ def alert_logic(
     endLine: int,
     silent: bool,
 ) -> bool:
-    """Parse GitHub Alerts."""
+    """Parse Obsidian Alerts."""
     parser_func = parse_possible_blockquote_admon_factory(
         OBSIDIAN_CALLOUT_PREFIX,
         PATTERNS,
