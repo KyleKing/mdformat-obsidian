@@ -17,7 +17,7 @@ def with_plugin(filename, plugins):
 @pytest.mark.parametrize(
     ("line", "title", "text", "expected", "plugins"),
     [
-        *with_plugin("obsidian.md", [obsidian_callout_plugin]),
+        *with_plugin("obsidian_callouts.md", [obsidian_callout_plugin]),
     ],
 )
 def test_render(line, title, text, expected, plugins):
