@@ -8,12 +8,19 @@ from markdown_it import MarkdownIt
 from mdformat.renderer import RenderContext, RenderTreeNode
 from mdformat.renderer.typing import Render
 
-from .mdit_plugins import INLINE_SEP, OBSIDIAN_CALLOUT_PREFIX, obsidian_callout_plugin
+from .mdit_plugins import (
+    INLINE_SEP,
+    OBSIDIAN_CALLOUT_PREFIX,
+    OBSIDIAN_INLINE_FOOTNOTE_PREFIX,
+    obsidian_callout_plugin,
+    obsidian_inline_footnote_plugin,
+)
 
 
 def update_mdit(mdit: MarkdownIt) -> None:
     """Update the parser to identify Alerts."""
     mdit.use(obsidian_callout_plugin)
+    mdit.use(obsidian_inline_footnote_plugin)
 
 
 def _render_obsidian_callout(node: RenderTreeNode, context: RenderContext) -> str:
@@ -30,6 +37,15 @@ def _no_render(
 ) -> str:
     """Skip rendering when handled separately."""
     return ""
+
+
+def _render_content(
+    node: RenderTreeNode,
+    context: RenderContext,  # noqa: ARG001
+) -> str:
+    """Render content."""
+    elements = [child.content for child in node.children if child.content]
+    return "\n\n".join(elements).rstrip()
 
 
 def _recursive_render(
@@ -51,4 +67,5 @@ RENDERERS: Mapping[str, Render] = {
     f"{OBSIDIAN_CALLOUT_PREFIX}_collapsed": _no_render,
     # FIXME: can I add divs without introducing new blocks?
     f"{OBSIDIAN_CALLOUT_PREFIX}_content": _recursive_render,
+    OBSIDIAN_INLINE_FOOTNOTE_PREFIX: _render_content,
 }

@@ -15,7 +15,7 @@ OBSIDIAN_CALLOUT_PREFIX = "obsidian_callout"
 """Prefix used to differentiate the parsed output."""
 
 INLINE_SEP = "\n\n"
-"""Optional separator to differentiate the title and ineline content (if present)."""
+"""Optional separator to differentiate the title and, if present, inline content."""
 
 PATTERN = r"^\\?\[!(?P<title>[^\]]+)\\?\](?P<fold>[\-\+]?)"
 """Regular expression to match Obsidian Alerts."""
