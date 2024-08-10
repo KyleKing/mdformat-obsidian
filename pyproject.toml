@@ -101,6 +101,8 @@ ignore = [
   'CPY001', # Missing copyright notice at top of file
   'D203', # "1 blank line required before class docstring" (Conflicts with D211)
   'D213', # "Multi-line docstring summary should start at the second line" (Conflicts with D212)
+  'DOC201', # `return` is not documented in docstring
+  'DOC402', # `yield` is not documented in docstring
   'EM101', # Exception must not use a string literal, assign to variable first
   'FBT001', # Boolean-typed positional argument in function definition
   'FIX001', # Line contains FIXME
@@ -136,8 +138,6 @@ known-first-party = ['mdformat_obsidian', 'tests']
   'ARG001', # Unused function argument: `line`
   'D100', # Missing docstring in public module
   'D103', # Missing docstring in public function
-  'DOC201', # `return` is not documented in docstring
-  'DOC402', # `yield` is not documented in docstring
   'PLC2701', # Private name import `_<>` from external module
   'PT004', # flake8-pytest-style: fixture does not return
   'S101', # Use of `assert` detected
