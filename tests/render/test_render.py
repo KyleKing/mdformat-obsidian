@@ -5,8 +5,7 @@ from markdown_it import MarkdownIt
 from markdown_it.utils import read_fixture_file
 
 from mdformat_obsidian.mdit_plugins import obsidian_callout_plugin
-
-from ..helpers import print_text
+from tests.helpers import print_text
 
 FIXTURE_PATH = Path(__file__).parent / "fixtures"
 

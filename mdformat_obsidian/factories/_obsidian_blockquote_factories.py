@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 # FYI: copied from mdformat_admon.factories
 @contextmanager
 def new_token(state: StateBlock, name: str, kind: str) -> Generator[Token, None, None]:
-    """Creates scoped token."""
+    """Return scoped token."""
     yield state.push(f"{name}_open", kind, 1)
     state.push(f"{name}_close", kind, -1)
 

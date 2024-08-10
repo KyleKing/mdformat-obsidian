@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from markdown_it.rules_block import StateBlock
 
-from ..factories import (
+from mdformat_obsidian.factories import (
     CalloutData,
     new_token,
     obsidian_callout_plugin_factory,
