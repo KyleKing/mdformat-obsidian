@@ -39,13 +39,9 @@ def _no_render(
     return ""
 
 
-def _render_content(
-    node: RenderTreeNode,
-    context: RenderContext,  # noqa: ARG001
-) -> str:
-    """Render content."""
-    elements = [child.content for child in node.children if child.content]
-    return "\n\n".join(elements).rstrip()
+def _render_meta_content(node: RenderTreeNode, context: RenderContext) -> str:  # noqa: ARG001
+    """Return node content without additional processing."""
+    return node.meta.get("content", "")
 
 
 def _recursive_render(
@@ -67,5 +63,5 @@ RENDERERS: Mapping[str, Render] = {
     f"{OBSIDIAN_CALLOUT_PREFIX}_collapsed": _no_render,
     # FIXME: can I add divs without introducing new blocks?
     f"{OBSIDIAN_CALLOUT_PREFIX}_content": _recursive_render,
-    OBSIDIAN_INLINE_FOOTNOTE_PREFIX: _render_content,
+    OBSIDIAN_INLINE_FOOTNOTE_PREFIX: _render_meta_content,
 }
