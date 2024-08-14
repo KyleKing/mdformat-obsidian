@@ -21,7 +21,6 @@ Add this package wherever you use `mdformat` and the plugin will be auto-recogni
 - [mdformat-beautysh](https://pypi.org/project/mdformat-beautysh)
 - [mdformat-black](https://pypi.org/project/mdformat-black)
 - [mdformat-config](https://pypi.org/project/mdformat-config)
-- [mdformat-footnote](https://pypi.org/project/mdformat-footnote)
 - [mdformat-frontmatter](https://pypi.org/project/mdformat-frontmatter)
 - [mdformat-simple-breaks](https://pypi.org/project/mdformat-simple-breaks)
 - [mdformat-tables](https://pypi.org/project/mdformat-tables)

@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING, Callable, NamedTuple
 
 from markdown_it import MarkdownIt
 from markdown_it.rules_block import StateBlock
+from markdown_it.rules_inline import StateInline
 from mdit_py_plugins.utils import is_code_block
 
 if TYPE_CHECKING:
@@ -22,8 +23,12 @@ if TYPE_CHECKING:
 
 # FYI: copied from mdformat_admon.factories
 @contextmanager
-def new_token(state: StateBlock, name: str, kind: str) -> Generator[Token, None, None]:
-    """Return scoped token."""
+def new_token(
+    state: StateBlock | StateInline,
+    name: str,
+    kind: str,
+) -> Generator[Token, None, None]:
+    """Create scoped token."""
     yield state.push(f"{name}_open", kind, 1)
     state.push(f"{name}_close", kind, -1)
 
