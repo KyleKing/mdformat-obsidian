@@ -14,7 +14,6 @@ classifiers = [
 ]
 dependencies = [
   "mdformat >= 0.7.17",
-  "mdformat-footnote >= 0.1.1",
   "mdformat-gfm >= 0.3.6",
   "mdit-py-plugins >= 0.4.1",
 ]

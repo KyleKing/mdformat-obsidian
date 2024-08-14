@@ -31,6 +31,6 @@ fixtures = flatten(
     ids=[f[1] for f in fixtures],
 )
 def test_material_content_tabs_fixtures(line, title, text, expected):
-    output = mdformat.text(text, extensions={"footnote", "obsidian"})
+    output = mdformat.text(text, extensions={"obsidian"})
     print_text(output, expected)
     assert output.rstrip() == expected.rstrip()

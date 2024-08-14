@@ -11,17 +11,18 @@ from mdformat.renderer.typing import Render
 from .mdit_plugins import (
     INLINE_SEP,
     OBSIDIAN_CALLOUT_PREFIX,
-    OBSIDIAN_INLINE_FOOTNOTE_PREFIX,
-    format_obsidian_inline_footnote_markup,
+    footnote_plugin,
+    format_footnote,
+    format_footnote_block,
+    format_footnote_ref,
     obsidian_callout_plugin,
-    obsidian_inline_footnote_plugin,
 )
 
 
 def update_mdit(mdit: MarkdownIt) -> None:
     """Update the parser to identify Alerts."""
     mdit.use(obsidian_callout_plugin)
-    mdit.use(obsidian_inline_footnote_plugin)
+    mdit.use(footnote_plugin)
 
 
 def _render_obsidian_callout(node: RenderTreeNode, context: RenderContext) -> str:
@@ -53,11 +54,13 @@ def _recursive_render(
 # This can be used to overwrite renderer functions of existing syntax
 # or add support for new syntax.
 RENDERERS: Mapping[str, Render] = {
+    "footnote": format_footnote,
+    "footnote_ref": format_footnote_ref,
+    "footnote_block": format_footnote_block,
     OBSIDIAN_CALLOUT_PREFIX: _render_obsidian_callout,
     f"{OBSIDIAN_CALLOUT_PREFIX}_title": _no_render,
     f"{OBSIDIAN_CALLOUT_PREFIX}_title_inner": _no_render,
     f"{OBSIDIAN_CALLOUT_PREFIX}_collapsed": _no_render,
     # FIXME: can I add divs without introducing new blocks?
     f"{OBSIDIAN_CALLOUT_PREFIX}_content": _recursive_render,
-    OBSIDIAN_INLINE_FOOTNOTE_PREFIX: format_obsidian_inline_footnote_markup,
 }
