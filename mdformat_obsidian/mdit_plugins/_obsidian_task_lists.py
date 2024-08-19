@@ -43,16 +43,18 @@ def tasklists_plugin(md: MarkdownIt) -> None:
         checkbox.content = f"[{mark or ' '}] "
 
         assert token.children is not None  # for mypy
-        start = 0
-        chars_in_box = 3
         # Remove escaped brackets
-        if len(token.children) > chars_in_box and token.children[2].content == "]":
-            token.children = token.children[3:]
+        # Addresses when children are: \[, <mark>, \], <content>, ...
+        three = 3
+        if len(token.children) > three and token.children[three - 1].content == "]":
+            token.children = token.children[three:]
+            token.children[0].content = token.children[0].content.lstrip()
+            token.content = token.content.lstrip()
         else:
             start = match.end()
+            token.children[0].content = token.children[0].content[start:]
+            token.content = token.content[start:]
         token.children.insert(0, checkbox)
-        token.children[1].content = token.children[1].content[start:].lstrip()
-        token.content = token.content[start:].lstrip()
 
     def fcn(state: StateCore) -> None:
         tokens = state.tokens
