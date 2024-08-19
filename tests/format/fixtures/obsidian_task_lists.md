@@ -3,19 +3,24 @@ Obsidian Task Lists (Fixes: https://github.com/KyleKing/mdformat-obsidian/issues
 # Header
 
 - [x] Milk
-- [?] Eggs
-- [-] Bread
+  - [?] Eggs
+    - \[-\] Bread
 - [ ] Bread
+- [ ] With footnotes[^note] and [links](https://github.com/hukkin/mdformat-gfm)
 
 Regular paragraph
-.
 
+[^note]: Named footnote
+.
 # Header
 
 - [x] Milk
-- [?] Eggs
-- [-] Bread
+  - [?] Eggs
+    - [-] Bread
 - [ ] Bread
+- [ ] With footnotes[^note] and [links](https://github.com/hukkin/mdformat-gfm)
 
 Regular paragraph
+
+[^note]: Named footnote
 .
