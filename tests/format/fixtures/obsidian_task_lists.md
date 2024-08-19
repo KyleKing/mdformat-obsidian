@@ -8,6 +8,11 @@ Obsidian Task Lists (Fixes: https://github.com/KyleKing/mdformat-obsidian/issues
 - [ ] Bread
 - [ ] With footnotes[^note] and [links](https://github.com/hukkin/mdformat-gfm)
 
+```md
+Text
+- [	]	Unformatted checklist with tabs
+```
+
 Regular paragraph
 
 [^note]: Named footnote
@@ -19,6 +24,11 @@ Regular paragraph
     - [-] Bread
 - [ ] Bread
 - [ ] With footnotes[^note] and [links](https://github.com/hukkin/mdformat-gfm)
+
+```md
+Text
+- [	]	Unformatted checklist with tabs
+```
 
 Regular paragraph
 
