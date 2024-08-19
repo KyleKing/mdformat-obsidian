@@ -4,7 +4,11 @@ import pytest
 from markdown_it import MarkdownIt
 from markdown_it.utils import read_fixture_file
 
-from mdformat_obsidian.mdit_plugins import obsidian_callout_plugin
+from mdformat_obsidian.mdit_plugins import (
+    footnote_plugin,
+    obsidian_callout_plugin,
+    tasklists_plugin,
+)
 from tests.helpers import print_text
 
 FIXTURE_PATH = Path(__file__).parent / "fixtures"
@@ -18,6 +22,8 @@ def with_plugin(filename, plugins):
     ("line", "title", "text", "expected", "plugins"),
     [
         *with_plugin("obsidian_callouts.md", [obsidian_callout_plugin]),
+        *with_plugin("obsidian_inline_footnotes.md", [footnote_plugin]),
+        *with_plugin("obsidian_task_lists.md", [tasklists_plugin]),
     ],
 )
 def test_render(line, title, text, expected, plugins):

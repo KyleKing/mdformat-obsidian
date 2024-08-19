@@ -16,6 +16,7 @@ from .mdit_plugins import (
     format_footnote_block,
     format_footnote_ref,
     obsidian_callout_plugin,
+    tasklists_plugin,
 )
 
 
@@ -23,6 +24,7 @@ def update_mdit(mdit: MarkdownIt) -> None:
     """Update the parser to identify Alerts."""
     mdit.use(obsidian_callout_plugin)
     mdit.use(footnote_plugin)
+    mdit.use(tasklists_plugin)
 
 
 def _render_obsidian_callout(node: RenderTreeNode, context: RenderContext) -> str:

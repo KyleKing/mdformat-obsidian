@@ -20,7 +20,11 @@ def flatten(nested_list: list[list[T]]) -> list[T]:
 fixtures = flatten(
     [
         read_fixture_file(Path(__file__).parent / "fixtures" / fixture_path)
-        for fixture_path in ("obsidian_callouts.md", "obsidian_inline_footnotes.md")
+        for fixture_path in (
+            "obsidian_callouts.md",
+            "obsidian_inline_footnotes.md",
+            "obsidian_task_lists.md",
+        )
     ],
 )
 
