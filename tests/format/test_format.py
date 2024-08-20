@@ -21,6 +21,7 @@ fixtures = flatten(
     [
         read_fixture_file(Path(__file__).parent / "fixtures" / fixture_path)
         for fixture_path in (
+            "dollar_math.md",
             "obsidian_callouts.md",
             "obsidian_inline_footnotes.md",
             "obsidian_task_lists.md",
