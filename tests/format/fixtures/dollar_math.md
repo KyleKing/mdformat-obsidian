@@ -57,7 +57,7 @@ $$ (mymath2)
 The equation {eq}`mymath2` is also a quadratic equation.
 .
 
-LaTeX Math (https://myst-parser.readthedocs.io/en/latest/syntax/math.html#direct-latex-math)
+(TODO: Unsupported) LaTeX Math (https://myst-parser.readthedocs.io/en/latest/syntax/math.html#direct-latex-math)
 .
 \begin{gather*}
 a_1=b_1+c_1\\
@@ -71,15 +71,15 @@ a_{21}& =b_{21}&
   a_{22}& =b_{22}+c_{22}
 \end{align}
 .
-\begin{gather*}
+\\begin{gather\*}
 a_1=b_1+c_1\\
 a_2=b_2+c_2-d_2+e_2
-\end{gather*}
+\\end{gather\*}
 
-\begin{align}
-a_{11}& =b_{11}&
-  a_{12}& =b_{12}\\
-a_{21}& =b_{21}&
-  a_{22}& =b_{22}+c_{22}
-\end{align}
+\\begin{align}
+a\_{11}& =b\_{11}&
+a\_{12}& =b\_{12}\\
+a\_{21}& =b\_{21}&
+a\_{22}& =b\_{22}+c\_{22}
+\\end{align}
 .
