@@ -143,6 +143,9 @@ known-first-party = ['mdformat_obsidian', 'tests']
   'S101', # Use of `assert` detected
 ]
 
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
 [tool.tomlsort]
 all = true
 in_place = true
