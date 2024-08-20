@@ -7,7 +7,9 @@
 [cov-link]: https://codecov.io/gh/executablebooks/mdformat-obsidian
  -->
 
-An [mdformat](https://github.com/executablebooks/mdformat) plugin for [Obsidian Flavored Markdown](https://help.obsidian.md/Editing+and+formatting/Obsidian+Flavored+Markdown). This plugin directly supports [Callouts](https://help.obsidian.md/Editing+and+formatting/Callouts) and defers the rest of the formatting to additional plugins installed automatically.
+An [mdformat](https://github.com/executablebooks/mdformat) plugin for [Obsidian Flavored Markdown](https://help.obsidian.md/Editing+and+formatting/Obsidian+Flavored+Markdown). This plugin directly supports [Callouts](https://help.obsidian.md/Editing+and+formatting/Callouts) and a few other features. More documentation will be forthcoming, but in the interim, see the test directory for supported formats.
+
+<!-- TODO: Update documentation with recent features (and known caveats) -->
 
 > [!NOTE]
 > The format for [GitHub Alerts](https://github.com/kyleking/mdformat-gfm-alerts) differs slightly from Obsidian, so they are not fully compatible. Obsidian supports folding, custom titles, and is case insensitive. To improve interoperability, this package makes the stylistic choice of capitalizing the text within `[!...]`.
