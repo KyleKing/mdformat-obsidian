@@ -1,7 +1,7 @@
 ---
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+    rev: v5.0.0
     hooks:
       - id: check-added-large-files
       - id: check-executables-have-shebangs
@@ -18,23 +18,15 @@ repos:
       - id: end-of-file-fixer
         exclude: \.copier-answers\.yml|__snapshots__/.*\.ambr
       - id: fix-byte-order-marker
-      - id: fix-encoding-pragma
-        args: [--remove]
       - id: forbid-new-submodules
       - id: mixed-line-ending
         args: [--fix=auto]
       - id: pretty-format-json
         args: [--autofix, --indent=4]
       - id: trailing-whitespace
-        exclude: tests/.*fixtures.*\.md|__snapshots__/.*\.ambr
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.6.1
-    hooks:
-      - id: ruff
-        args: [--fix]
-      - id: ruff-format
+        exclude: __snapshots__/.*\.ambr
   - repo: https://github.com/executablebooks/mdformat
-    rev: 0.7.17
+    rev: 0.7.18
     hooks:
       - id: mdformat
         additional_dependencies:
