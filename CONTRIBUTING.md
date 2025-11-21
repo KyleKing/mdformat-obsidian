@@ -14,8 +14,8 @@ This package utilizes [flit](https://flit.readthedocs.io) as the build engine, a
 To install these development dependencies:
 
 ```bash
-pipx install tox
-# or: uv tool install tox --with tox-uv
+uv tool install tox --with tox-uv
+# or: pipx install tox
 ```
 
 To run the tests:
@@ -27,7 +27,7 @@ tox
 and with test coverage:
 
 ```bash
-tox -e py39-cov
+tox -e py310-test
 ```
 
 The easiest way to write tests, is to edit `tests/fixtures.md`
@@ -38,18 +38,20 @@ To run the code formatting and style checks:
 tox -e py312-pre-commit
 ```
 
-or directly
+or directly with [prek](https://github.com/j178/prek) (or pre-commit)
 
 ```bash
-pipx install pre-commit
-# or: uv tool install pre-commit
-pre-commit run --all
+uv tool install prek
+# or: pipx install prek, brew install prek, etc.
+
+prek install -f
+prek run --all
 ```
 
 To run the pre-commit hook test:
 
 ```bash
-tox -e py39-hook
+tox -e py310-hook
 ```
 
 ## `ptw` testing
@@ -57,23 +59,24 @@ tox -e py39-hook
 See configuration in `pyproject.toml` for `[tool.pytest-watcher]`
 
 ```sh
-pipx install pytest-watcher
+uv tool install pytest-watcher
+# or: pipx install pytest-watcher
 
 ptw .
 ```
 
-## Local pipx testing
+## Local uv/pipx testing
 
-Run the latest local code anywhere with pipx.
+Run the latest local code anywhere with uv tool.
+
+```sh
+uv tool install . --editable --force --with="mdformat>=0.7.19"
+```
+
+Or with pipx:
 
 ```sh
 pipx install . --include-deps --force --editable
-```
-
-Or with uv:
-
-```sh
-uv tool install mdformat --force --with-editable=.
 ```
 
 ## Publish to PyPi
