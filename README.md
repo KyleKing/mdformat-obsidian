@@ -7,9 +7,7 @@
 [cov-link]: https://codecov.io/gh/executablebooks/mdformat-obsidian
  -->
 
-An [mdformat](https://github.com/executablebooks/mdformat) plugin for [Obsidian Flavored Markdown](https://help.obsidian.md/Editing+and+formatting/Obsidian+Flavored+Markdown). This plugin directly supports [Callouts](https://help.obsidian.md/Editing+and+formatting/Callouts) and a few other features. More documentation will be forthcoming, but in the interim, see the test directory for supported formats.
-
-<!-- TODO: Update documentation with recent features (and known caveats) -->
+An [mdformat](https://github.com/executablebooks/mdformat) plugin for [Obsidian Flavored Markdown](https://help.obsidian.md/Editing+and+formatting/Obsidian+Flavored+Markdown). This plugin directly supports [Callouts](https://help.obsidian.md/Editing+and+formatting/Callouts), inline footnotes, task lists with custom markers, and dollar math. See the test directory for supported formats.
 
 > [!NOTE]
 > The format for [GitHub Alerts](https://github.com/kyleking/mdformat-gfm-alerts) differs slightly from Obsidian, so they are not fully compatible. Obsidian supports folding, custom titles, and is case insensitive. To improve interoperability, this package makes the stylistic choice of capitalizing the text within `[!...]`.
@@ -67,12 +65,19 @@ md.use(obsidian_plugin)
 text = "> [!tip] Callouts can have custom titles\n> Like this one."
 md.render(text)
 # <blockquote>
-
+# <div data-callout-metadata="" data-callout-fold="" data-callout="tip" class="callout">
+# <div class="callout-title">
+# <div class="callout-title-inner">Callouts can have custom titles</div>
+# </div>
+# <div class="callout-content">
+# <p>Like this one.</p>
+# </div>
+# </div>
 # </blockquote>
 ```
 
 > [!WARNING]
-> This package does not properly handle replacing the `blockquote` outer `div` with a `div` for accessibility. This should be possible with `markdown-it`, but I haven't yet found a way.
+> The outer `<blockquote>` tag is preserved to maintain compatibility with standard Markdown parsers. For full accessibility, you may want to replace this with a `<div>` in post-processing, as the `>` blockquote syntax is being repurposed for callouts.
 
 ## Contributing
 

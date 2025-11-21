@@ -67,10 +67,13 @@ def format_obsidian_callout_markup(
 
             state.md.block.tokenize(state, start_line + 1, admonition.next_line)
 
-    # FIXME: this isn't actually replacing the block quote outer div?
-    #
-    # Render as a div for accessibility rather than block quote
-    #   Which is because '>' is being misused (https://github.com/orgs/community/discussions/16925#discussioncomment-8729846)
+    # NOTE: The blockquote wrapper cannot be replaced with a div at this stage.
+    # The blockquote tokens are created by markdown-it's blockquote rule before
+    # this plugin runs. To truly replace the blockquote, we would need to either:
+    # 1. Override the blockquote rule entirely (complex, breaks other features)
+    # 2. Post-process tokens to replace blockquote with div (may break nesting)
+    # For accessibility, consider post-processing the HTML output instead.
+    # See: https://github.com/orgs/community/discussions/16925#discussioncomment-8729846
     state.parentType = "div"  # admonition.old_state.parentType
     state.lineMax = admonition.old_state.lineMax
     state.line = admonition.next_line
