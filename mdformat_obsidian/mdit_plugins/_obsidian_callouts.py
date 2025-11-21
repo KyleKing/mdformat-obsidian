@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
+from markdown_it import MarkdownIt
 from markdown_it.rules_block import StateBlock
 
 from mdformat_obsidian.factories import (
     CalloutData,
     new_token,
-    obsidian_callout_plugin_factory,
     parse_possible_blockquote_admon_factory,
 )
 
@@ -97,7 +97,36 @@ def alert_logic(
     return result
 
 
-obsidian_callout_plugin = obsidian_callout_plugin_factory(
-    OBSIDIAN_CALLOUT_PREFIX,
-    alert_logic,
-)
+def obsidian_callout_plugin(md: MarkdownIt) -> None:
+    """Install the obsidian callout plugin."""
+    md.block.ruler.before("blockquote", OBSIDIAN_CALLOUT_PREFIX, alert_logic)
+
+    # Register HTML renderer rules for proper HTML output
+    def render_callout_open(self, tokens, idx, options, env):
+        token = tokens[idx]
+        # Build attributes string using the renderer's renderAttrs method
+        attrs_str = self.renderAttrs(token)
+        # Check if next token is inline or a closing tag to avoid extra newlines
+        if idx + 1 < len(tokens):
+            next_token = tokens[idx + 1]
+            # Don't add newline if next is inline content or immediately closing
+            next_is_inline_or_close = (next_token.type == "inline" or next_token.nesting == -1)
+            newline = "" if next_is_inline_or_close else "\n"
+        else:
+            newline = "\n"
+        return f"<{token.tag}{attrs_str}>{newline}"
+
+    def render_callout_close(self, tokens, idx, options, env):
+        return f"</{tokens[idx].tag}>\n"
+
+    # Register renderers for all callout token types (only for HTML output)
+    md.add_render_rule(f"{OBSIDIAN_CALLOUT_PREFIX}_open", render_callout_open, fmt="html")
+    md.add_render_rule(f"{OBSIDIAN_CALLOUT_PREFIX}_close", render_callout_close, fmt="html")
+    md.add_render_rule(f"{OBSIDIAN_CALLOUT_PREFIX}_title_open", render_callout_open, fmt="html")
+    md.add_render_rule(f"{OBSIDIAN_CALLOUT_PREFIX}_title_close", render_callout_close, fmt="html")
+    md.add_render_rule(f"{OBSIDIAN_CALLOUT_PREFIX}_title_inner_open", render_callout_open, fmt="html")
+    md.add_render_rule(f"{OBSIDIAN_CALLOUT_PREFIX}_title_inner_close", render_callout_close, fmt="html")
+    md.add_render_rule(f"{OBSIDIAN_CALLOUT_PREFIX}_collapsed_open", render_callout_open, fmt="html")
+    md.add_render_rule(f"{OBSIDIAN_CALLOUT_PREFIX}_collapsed_close", render_callout_close, fmt="html")
+    md.add_render_rule(f"{OBSIDIAN_CALLOUT_PREFIX}_content_open", render_callout_open, fmt="html")
+    md.add_render_rule(f"{OBSIDIAN_CALLOUT_PREFIX}_content_close", render_callout_close, fmt="html")
