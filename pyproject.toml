@@ -23,7 +23,7 @@ license-files = ["LICENSE"]
 name = "mdformat_obsidian"
 readme = "README.md"
 requires-python = ">=3.10.0"
-version = "0.1.0"
+version = "0.2.0"
 
 [project.entry-points."mdformat.parser_extension"]
 obsidian = "mdformat_obsidian"
@@ -54,7 +54,7 @@ homepage = "https://github.com/kyleking/mdformat-obsidian"
 
 [tool.commitizen]
 tag_format = "v${version}"
-version = "0.1.0"
+version = "0.2.0"
 version_files = ["mdformat_obsidian/__init__.py", "pyproject.toml:^version"]
 
 [tool.mypy]
