@@ -66,3 +66,70 @@ Nested Callouts
 </div>
 </div>
 .
+
+Callout with Code Block
+.
+> [!tip] Code in Callouts
+> You can include code:
+>
+> ```python
+> def hello():
+>     print("world")
+> ```
+.
+<div>
+<div data-callout-metadata="" data-callout-fold="" data-callout="tip" class="callout">
+<div class="callout-title">
+<div class="callout-title-inner">Code in Callouts</div>
+</div>
+<div class="callout-content">
+<p>You can include code:</p>
+<pre><code class="language-python">def hello():
+    print(&quot;world&quot;)
+</code></pre>
+</div>
+</div>
+</div>
+.
+
+Callout with Lists
+.
+> [!note] Lists work too
+> - Item 1
+> - Item 2
+>   - Nested item
+> - Item 3
+.
+<div>
+<div data-callout-metadata="" data-callout-fold="" data-callout="note" class="callout">
+<div class="callout-title">
+<div class="callout-title-inner">Lists work too</div>
+</div>
+<div class="callout-content">
+<ul>
+<li>Item 1</li>
+<li>Item 2
+<ul>
+<li>Nested item</li>
+</ul>
+</li>
+<li>Item 3</li>
+</ul>
+</div>
+</div>
+</div>
+.
+
+Empty Callout
+.
+> [!info]
+.
+<div>
+<div data-callout-metadata="" data-callout-fold="" data-callout="info" class="callout">
+<div class="callout-title">
+<div class="callout-title-inner"></div>
+</div>
+<div class="callout-content"></div>
+</div>
+</div>
+.
