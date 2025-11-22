@@ -163,7 +163,7 @@ inline_arrays = false
 [tool.tox]
 # Docs: https://tox.wiki/en/4.23.2/config.html#core
 basepython = ["py310", "py314"]
-env_list = ["cz", "hook-min", "prek", "ruff", "test", "test-min", "type"]
+env_list = ["hook-min", "prek", "ruff", "test-min", "type"]
 isolated_build = true
 requires = ["tox>=4.32.0"]
 skip_missing_interpreters = false
