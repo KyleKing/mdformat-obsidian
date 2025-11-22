@@ -8,9 +8,9 @@ Adapted from the implementation for `mdformat-gfm-alerts`:
 from __future__ import annotations
 
 import re
-from collections.abc import Generator
+from collections.abc import Callable, Generator
 from contextlib import contextmanager, suppress
-from typing import TYPE_CHECKING, Callable, NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 
 from markdown_it import MarkdownIt
 from markdown_it.rules_block import StateBlock
