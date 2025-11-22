@@ -2,10 +2,11 @@
 
 Docs: https://help.obsidian.md/Editing+and+formatting/Basic+formatting+syntax#Footnotes
 
-TODO: Add rendering support to mdformat-footnote:
-https://github.com/executablebooks/mdformat-footnote/blob/80852fc20cfba7fd0330b9ac7a1a4df983542942/mdformat_footnote/plugin.py#L17
+NOTE: Rendering support for inline footnotes (^[...]) is implemented below.
+This extends the standard footnote plugin from mdit-py-plugins to support
+Obsidian's inline footnote syntax in addition to standard footnote references.
 
-HACK: Under MIT license, code is adapted from:
+Code adapted under MIT license from:
 https://github.com/executablebooks/mdformat-footnote/blob/80852fc20cfba7fd0330b9ac7a1a4df983542942/mdformat_footnote/plugin.py#L19C1-L51
 
 """

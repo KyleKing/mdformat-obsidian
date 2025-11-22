@@ -90,6 +90,7 @@ RENDERERS: Mapping[str, Render] = {
     f"{OBSIDIAN_CALLOUT_PREFIX}_title": _no_render,
     f"{OBSIDIAN_CALLOUT_PREFIX}_title_inner": _no_render,
     f"{OBSIDIAN_CALLOUT_PREFIX}_collapsed": _no_render,
-    # FIXME: can I add divs without introducing new blocks?
+    # NOTE: The content div uses recursive_render to properly handle nested content
+    # without introducing extra newlines that would create unwanted block elements
     f"{OBSIDIAN_CALLOUT_PREFIX}_content": _recursive_render,
 }

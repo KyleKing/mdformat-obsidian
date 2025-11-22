@@ -2,14 +2,23 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
+from markdown_it import MarkdownIt
 from markdown_it.rules_block import StateBlock
 
 from mdformat_obsidian.factories import (
     CalloutData,
     new_token,
-    obsidian_callout_plugin_factory,
     parse_possible_blockquote_admon_factory,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    from markdown_it.renderer import RendererHTML
+    from markdown_it.token import Token
+    from markdown_it.utils import EnvType, OptionsDict
 
 OBSIDIAN_CALLOUT_PREFIX = "obsidian_callout"
 """Prefix used to differentiate the parsed output."""
@@ -67,10 +76,13 @@ def format_obsidian_callout_markup(
 
             state.md.block.tokenize(state, start_line + 1, admonition.next_line)
 
-    # FIXME: this isn't actually replacing the block quote outer div?
-    #
-    # Render as a div for accessibility rather than block quote
-    #   Which is because '>' is being misused (https://github.com/orgs/community/discussions/16925#discussioncomment-8729846)
+    # NOTE: The blockquote wrapper cannot be replaced with a div at this stage.
+    # The blockquote tokens are created by markdown-it's blockquote rule before
+    # this plugin runs. To truly replace the blockquote, we would need to either:
+    # 1. Override the blockquote rule entirely (complex, breaks other features)
+    # 2. Post-process tokens to replace blockquote with div (may break nesting)
+    # For accessibility, consider post-processing the HTML output instead.
+    # See: https://github.com/orgs/community/discussions/16925#discussioncomment-8729846
     state.parentType = "div"  # admonition.old_state.parentType
     state.lineMax = admonition.old_state.lineMax
     state.line = admonition.next_line
@@ -94,7 +106,70 @@ def alert_logic(
     return result
 
 
-obsidian_callout_plugin = obsidian_callout_plugin_factory(
-    OBSIDIAN_CALLOUT_PREFIX,
-    alert_logic,
-)
+def obsidian_callout_plugin(md: MarkdownIt) -> None:
+    """Install the obsidian callout plugin."""
+    md.block.ruler.before("blockquote", OBSIDIAN_CALLOUT_PREFIX, alert_logic)
+
+    # Register HTML renderer rules for proper HTML output
+    def render_callout_open(
+        self: RendererHTML,
+        tokens: Sequence[Token],
+        idx: int,
+        _options: OptionsDict,
+        _env: EnvType,
+    ) -> str:
+        token = tokens[idx]
+        # Build attributes string using the renderer's renderAttrs method
+        attrs_str = self.renderAttrs(token)
+        # Check if next token is inline or a closing tag to avoid extra newlines
+        if idx + 1 < len(tokens):
+            next_token = tokens[idx + 1]
+            # Don't add newline if next is inline content or immediately closing
+            next_is_inline_or_close = (
+                next_token.type == "inline" or next_token.nesting == -1
+            )
+            newline = "" if next_is_inline_or_close else "\n"
+        else:
+            newline = "\n"
+        return f"<{token.tag}{attrs_str}>{newline}"
+
+    def render_callout_close(
+        _self: RendererHTML,
+        tokens: Sequence[Token],
+        idx: int,
+        _options: OptionsDict,
+        _env: EnvType,
+    ) -> str:
+        return f"</{tokens[idx].tag}>\n"
+
+    # Register renderers for all callout token types (only for HTML output)
+    md.add_render_rule(
+        f"{OBSIDIAN_CALLOUT_PREFIX}_open", render_callout_open, fmt="html"
+    )
+    md.add_render_rule(
+        f"{OBSIDIAN_CALLOUT_PREFIX}_close", render_callout_close, fmt="html"
+    )
+    md.add_render_rule(
+        f"{OBSIDIAN_CALLOUT_PREFIX}_title_open", render_callout_open, fmt="html"
+    )
+    md.add_render_rule(
+        f"{OBSIDIAN_CALLOUT_PREFIX}_title_close", render_callout_close, fmt="html"
+    )
+    md.add_render_rule(
+        f"{OBSIDIAN_CALLOUT_PREFIX}_title_inner_open", render_callout_open, fmt="html"
+    )
+    md.add_render_rule(
+        f"{OBSIDIAN_CALLOUT_PREFIX}_title_inner_close", render_callout_close, fmt="html"
+    )
+    md.add_render_rule(
+        f"{OBSIDIAN_CALLOUT_PREFIX}_collapsed_open", render_callout_open, fmt="html"
+    )
+    md.add_render_rule(
+        f"{OBSIDIAN_CALLOUT_PREFIX}_collapsed_close", render_callout_close, fmt="html"
+    )
+    md.add_render_rule(
+        f"{OBSIDIAN_CALLOUT_PREFIX}_content_open", render_callout_open, fmt="html"
+    )
+    md.add_render_rule(
+        f"{OBSIDIAN_CALLOUT_PREFIX}_content_close", render_callout_close, fmt="html"
+    )
