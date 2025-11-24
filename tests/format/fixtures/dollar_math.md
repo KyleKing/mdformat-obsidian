@@ -57,7 +57,7 @@ $$ (mymath2)
 The equation {eq}`mymath2` is also a quadratic equation.
 .
 
-(TODO: Unsupported) LaTeX Math (https://myst-parser.readthedocs.io/en/latest/syntax/math.html#direct-latex-math)
+(Unsupported) LaTeX Math (https://myst-parser.readthedocs.io/en/latest/syntax/math.html#direct-latex-math)
 .
 \begin{gather*}
 a_1=b_1+c_1\\

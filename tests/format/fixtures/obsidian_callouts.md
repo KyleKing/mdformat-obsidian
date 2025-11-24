@@ -70,3 +70,116 @@ Don't crash on incomplete alert (https://github.com/KyleKing/mdformat-obsidian/i
 
 > [!NOTE]
 .
+
+Callout with Code Block
+.
+> [!tip] Code in Callouts
+> You can include code:
+>
+> ```python
+> def hello():
+>     print("world")
+> ```
+.
+> [!TIP] Code in Callouts
+> You can include code:
+>
+> ```python
+> def hello():
+>     print("world")
+> ```
+.
+
+Callout with Lists
+.
+> [!note] Lists work too
+> - Item 1
+> - Item 2
+>   - Nested item
+> - Item 3
+.
+> [!NOTE] Lists work too
+> - Item 1
+> - Item 2
+>   - Nested item
+> - Item 3
+.
+
+Callout with Multiple Paragraphs
+.
+> [!warning] Multiple paragraphs
+> First paragraph with some text.
+>
+> Second paragraph with more content.
+>
+> Third paragraph for good measure.
+.
+> [!WARNING] Multiple paragraphs
+> First paragraph with some text.
+>
+> Second paragraph with more content.
+>
+> Third paragraph for good measure.
+.
+
+Empty Callout Content
+.
+> [!info]
+.
+> [!INFO]
+.
+
+Callout Types - All Standard Types
+.
+> [!note] Note callout
+
+> [!abstract] Abstract/Summary callout
+
+> [!info] Info callout
+
+> [!todo] Todo callout
+
+> [!tip] Tip/Hint callout
+
+> [!success] Success/Check callout
+
+> [!question] Question/Help callout
+
+> [!warning] Warning/Caution callout
+
+> [!failure] Failure/Fail callout
+
+> [!danger] Danger/Error callout
+
+> [!bug] Bug callout
+
+> [!example] Example callout
+
+> [!quote] Quote/Cite callout
+.
+> [!NOTE] Note callout
+
+> [!ABSTRACT] Abstract/Summary callout
+
+> [!INFO] Info callout
+
+> [!TODO] Todo callout
+
+> [!TIP] Tip/Hint callout
+
+> [!SUCCESS] Success/Check callout
+
+> [!QUESTION] Question/Help callout
+
+> [!WARNING] Warning/Caution callout
+
+> [!FAILURE] Failure/Fail callout
+
+> [!DANGER] Danger/Error callout
+
+> [!BUG] Bug callout
+
+> [!EXAMPLE] Example callout
+
+> [!QUOTE] Quote/Cite callout
+.
