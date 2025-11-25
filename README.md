@@ -7,18 +7,18 @@ An [mdformat](https://github.com/executablebooks/mdformat) plugin for [Obsidian 
 ## Features
 
 - **[Callouts](https://help.obsidian.md/Editing+and+formatting/Callouts)** - Alert-style blocks with custom titles and folding
-    - Supports all standard callout types (note, tip, warning, etc.)
-    - Custom callout types with any identifier
-    - Foldable callouts with `-` or `+` indicators
-    - Nested callouts
-    - Case-insensitive type matching (normalized to uppercase for compatibility)
+  - Supports all standard callout types (note, tip, warning, etc.)
+  - Custom callout types with any identifier
+  - Foldable callouts with `-` or `+` indicators
+  - Nested callouts
+  - Case-insensitive type matching (normalized to uppercase for compatibility)
 - **Inline Footnotes** - Obsidian's `^[inline footnote]` syntax
 - **Task Lists** - Extended checklist markers beyond `[x]` and `[ ]`
-    - Supports `[?]`, `[/]`, `[-]`, and other custom markers
-    - Preserves marker style during formatting
+  - Supports `[?]`, `[/]`, `[-]`, and other custom markers
+  - Preserves marker style during formatting
 - **Dollar Math** - LaTeX math with `$...$` and `$$...$$` delimiters
-    - Inline math: `$E=mc^2$`
-    - Block math: `$$\n...\n$$`
+  - Inline math: `$E=mc^2$`
+  - Block math: `$$\n...\n$$`
 
 > [!NOTE]
 > The format for [GitHub Alerts](https://github.com/kyleking/mdformat-gfm-alerts) differs slightly from Obsidian callouts. Obsidian supports folding, custom titles, and is case-insensitive. For improved interoperability, this package normalizes callout types to uppercase (e.g., `[!tip]` → `[!TIP]`).

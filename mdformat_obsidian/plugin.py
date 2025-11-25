@@ -10,6 +10,7 @@ from mdformat.renderer.typing import Render
 from mdit_py_plugins.dollarmath import dollarmath_plugin
 
 from .mdit_plugins import (
+    INLINE_SEP,
     OBSIDIAN_CALLOUT_PREFIX,
     footnote_plugin,
     format_footnote,
@@ -29,79 +30,11 @@ def update_mdit(mdit: MarkdownIt) -> None:
 
 
 def _render_obsidian_callout(node: RenderTreeNode, context: RenderContext) -> str:
-    """Render a callout `RenderTreeNode`."""
-    if node.nester_tokens is not None:
-        open_token = node.nester_tokens.opening
-
-        # Extract title and fold from attrs
-        title = str(open_token.attrs.get("data-callout", "note"))
-        fold_attr = open_token.attrs.get("data-callout-fold", "")
-        fold_marker = str(fold_attr) if fold_attr else ""
-        custom_title_attr = open_token.attrs.get("data-callout-title", "")
-        custom_title = str(custom_title_attr) if custom_title_attr else ""
-
-        # Build the first line with marker and optional custom title
-        if custom_title:
-            marker_line = f"> [!{title.upper()}]{fold_marker} {custom_title}"
-        else:
-            marker_line = f"> [!{title.upper()}]{fold_marker}"
-
-        # Collect content from children, skipping title and fold nodes and their descendants
-        content_lines = []
-        skip_until_close = None
-
-        for child in node.children:
-            # If we're skipping, check if this is the close token
-            if skip_until_close:
-                if child.type == skip_until_close:
-                    skip_until_close = None
-                continue
-
-            # Check if this is a title or fold open token
-            if child.type == f"{OBSIDIAN_CALLOUT_PREFIX}_title_open":
-                skip_until_close = f"{OBSIDIAN_CALLOUT_PREFIX}_title_close"
-                continue
-            if child.type == f"{OBSIDIAN_CALLOUT_PREFIX}_fold_open":
-                skip_until_close = f"{OBSIDIAN_CALLOUT_PREFIX}_fold_close"
-                continue
-            # Also skip standalone title/fold nodes
-            if child.type in (
-                f"{OBSIDIAN_CALLOUT_PREFIX}_title",
-                f"{OBSIDIAN_CALLOUT_PREFIX}_fold",
-            ):
-                continue
-
-            # Render this child
-            rendered = child.render(context=context).strip()
-            if rendered:
-                # Filter out any lines that are ONLY callout markers (no content after the marker)
-                # This handles edge cases where markers weren't properly removed during parsing
-                filtered_lines = []
-                for line in rendered.split("\n"):
-                    # Check if this line is just a marker with no content
-                    stripped = line.lstrip("> ").strip()
-                    # Pattern for marker-only line: [!type] or [!type]- or [!type]+ with nothing after
-                    is_marker_only = (
-                        stripped.startswith("[!")
-                        and "]" in stripped
-                        and stripped.split("]", 1)[1].strip() in ("", "-", "+")
-                    )
-                    if not is_marker_only:
-                        filtered_lines.append(line)
-                if filtered_lines:
-                    content_lines.append("\n".join(filtered_lines))
-
-        # Build result
-        if content_lines:
-            # Prefix each line with "> "
-            result_parts = [marker_line]
-            for content in content_lines:
-                for line in content.split("\n"):
-                    result_parts.append(f"> {line}")
-            return "\n".join(result_parts) + "\n"
-
-        return marker_line + "\n"
-    raise ValueError("Callout node should have nester tokens.")
+    """Render a `RenderTreeNode`."""
+    title_line = node.markup.replace(INLINE_SEP, "")
+    elements = [render for child in node.children if (render := child.render(context))]
+    # Do not separate the title line from the first row
+    return "\n".join([title_line, "\n\n".join(elements)]).rstrip()
 
 
 def _no_render(
@@ -110,6 +43,15 @@ def _no_render(
 ) -> str:
     """Skip rendering when handled separately."""
     return ""
+
+
+def _recursive_render(
+    node: RenderTreeNode,
+    context: RenderContext,
+) -> str:
+    elements = [render for child in node.children if (render := child.render(context))]
+    # Do not separate the title line from the first row
+    return "\n\n".join(elements).rstrip()
 
 
 # ================================================================================
@@ -146,9 +88,9 @@ RENDERERS: Mapping[str, Render] = {
     "math_inline": _math_inline_renderer,
     OBSIDIAN_CALLOUT_PREFIX: _render_obsidian_callout,
     f"{OBSIDIAN_CALLOUT_PREFIX}_title": _no_render,
-    f"{OBSIDIAN_CALLOUT_PREFIX}_title_open": _no_render,
-    f"{OBSIDIAN_CALLOUT_PREFIX}_title_close": _no_render,
-    f"{OBSIDIAN_CALLOUT_PREFIX}_fold": _no_render,
-    f"{OBSIDIAN_CALLOUT_PREFIX}_fold_open": _no_render,
-    f"{OBSIDIAN_CALLOUT_PREFIX}_fold_close": _no_render,
+    f"{OBSIDIAN_CALLOUT_PREFIX}_title_inner": _no_render,
+    f"{OBSIDIAN_CALLOUT_PREFIX}_collapsed": _no_render,
+    # NOTE: The content div uses recursive_render to properly handle nested content
+    # without introducing extra newlines that would create unwanted block elements
+    f"{OBSIDIAN_CALLOUT_PREFIX}_content": _recursive_render,
 }

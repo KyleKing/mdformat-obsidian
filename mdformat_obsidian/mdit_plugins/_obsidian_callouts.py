@@ -2,22 +2,22 @@
 
 from __future__ import annotations
 
-import re
 from typing import TYPE_CHECKING
 
 from markdown_it import MarkdownIt
-from markdown_it.token import Token
+from markdown_it.rules_block import StateBlock
 
-from mdformat_obsidian._synced.alert_factories import (
-    AlertMatch,
-    blockquote_to_alert_factory,
-    blockquote_to_div_plugin_factory,
+from mdformat_obsidian.factories import (
+    CalloutData,
+    new_token,
+    parse_possible_blockquote_admon_factory,
 )
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
     from markdown_it.renderer import RendererHTML
+    from markdown_it.token import Token
     from markdown_it.utils import EnvType, OptionsDict
 
 OBSIDIAN_CALLOUT_PREFIX = "obsidian_callout"
@@ -26,11 +26,81 @@ OBSIDIAN_CALLOUT_PREFIX = "obsidian_callout"
 INLINE_SEP = "\n\n"
 """Optional separator to differentiate the title and, if present, inline content."""
 
-PATTERN = re.compile(
-    r"^(?P<marker>\\?\[!(?P<title>[^\]]+)\\?\])(?P<fold>[\-\+]?)[ \t]*(?P<inline>[^\n\r]*)?",
-    re.IGNORECASE,
-)
-"""Regular expression to match Obsidian Callouts."""
+PATTERN = r"^\\?\[!(?P<title>[^\]]+)\\?\](?P<fold>[\-\+]?)"
+"""Regular expression to match Obsidian Alerts."""
+
+
+def format_obsidian_callout_markup(
+    state: StateBlock,
+    start_line: int,
+    admonition: CalloutData,
+) -> None:
+    """Format markup."""
+    tag = admonition.meta_text.upper()
+    folded = bool(admonition.fold)
+    custom_title = admonition.custom_title
+    title_line = f"[!{tag}]{admonition.fold}{INLINE_SEP}{custom_title}"
+
+    with new_token(state, OBSIDIAN_CALLOUT_PREFIX, "div") as token:
+        token.attrs = {
+            "data-callout-metadata": "",
+            "data-callout-fold": "",
+            "data-callout": admonition.meta_text.lower(),
+            "class": "callout",
+        }
+        if folded:
+            token.attrs["data-callout-fold"] = "-"
+            token.attrs["class"] = "callout is-collapsible is-collapsed"
+        token.block = True
+        token.map = [start_line, admonition.next_line]
+        token.markup = title_line
+        with new_token(state, f"{OBSIDIAN_CALLOUT_PREFIX}_title", "div") as tkn_title:
+            tkn_title.attrs = {"class": "callout-title"}
+
+            title_inner = f"{OBSIDIAN_CALLOUT_PREFIX}_title_inner"
+            with new_token(state, title_inner, "div") as tkn_title_inner:
+                tkn_title_inner.attrs = {"class": "callout-title-inner"}
+
+                tkn_title_txt = state.push("inline", "", 0)
+                tkn_title_txt.content = admonition.custom_title.strip()
+            if folded:
+                collapsed = f"{OBSIDIAN_CALLOUT_PREFIX}_collapsed"
+                with new_token(state, collapsed, "div") as tkn_collapsed:
+                    tkn_collapsed.attrs = {"class": "callout-fold is-collapsed"}
+
+        content = f"{OBSIDIAN_CALLOUT_PREFIX}_content"
+        with new_token(state, content, "div") as tkn_content:
+            tkn_content.attrs = {"class": "callout-content"}
+            if folded:
+                tkn_content.attrs["style"] = "display: none;"
+
+            state.md.block.tokenize(state, start_line + 1, admonition.next_line)
+
+    # NOTE: The blockquote wrapper is rendered as a div in HTML output (see HTML renderers).
+    # This improves accessibility since the '>' syntax is being repurposed for callouts.
+    # The markdown tokens remain as blockquote to preserve mdformat compatibility.
+    # Reference: https://github.com/orgs/community/discussions/16925#discussioncomment-8729846
+    state.parentType = "div"  # admonition.old_state.parentType
+    state.lineMax = admonition.old_state.lineMax
+    state.line = admonition.next_line
+
+
+def alert_logic(
+    state: StateBlock,
+    startLine: int,
+    endLine: int,
+    silent: bool,
+) -> bool:
+    """Parse Obsidian Alerts."""
+    parser_func = parse_possible_blockquote_admon_factory(
+        OBSIDIAN_CALLOUT_PREFIX,
+        {PATTERN},
+    )
+    result = parser_func(state, startLine, endLine, silent)
+    if isinstance(result, CalloutData):
+        format_obsidian_callout_markup(state, startLine, admonition=result)
+        return True
+    return result
 
 
 def _render_callout_open(
@@ -42,9 +112,12 @@ def _render_callout_open(
 ) -> str:
     """Render opening tag for callout elements."""
     token = tokens[idx]
+    # Build attributes string using the renderer's renderAttrs method
     attrs_str = self.renderAttrs(token)
+    # Check if next token is inline or a closing tag to avoid extra newlines
     if idx + 1 < len(tokens):
         next_token = tokens[idx + 1]
+        # Don't add newline if next is inline content or immediately closing
         next_is_inline_or_close = (
             next_token.type == "inline" or next_token.nesting == -1
         )
@@ -65,109 +138,58 @@ def _render_callout_close(
     return f"</{tokens[idx].tag}>\n"
 
 
+def _render_blockquote_with_callout(
+    self: RendererHTML,
+    tokens: Sequence[Token],
+    idx: int,
+    options: OptionsDict,
+    env: EnvType,
+) -> str:
+    """Render blockquote as div when it contains a callout for accessibility."""
+    # Check if next token is an obsidian callout
+    if (
+        idx + 1 < len(tokens)
+        and tokens[idx + 1].type == f"{OBSIDIAN_CALLOUT_PREFIX}_open"
+    ):
+        # Use div instead of blockquote for accessibility
+        return "<div>\n"
+    # Otherwise use default blockquote rendering
+    return self.renderToken(tokens, idx, options, env)
+
+
+def _render_blockquote_close_with_callout(
+    self: RendererHTML,
+    tokens: Sequence[Token],
+    idx: int,
+    options: OptionsDict,
+    env: EnvType,
+) -> str:
+    """Close div when blockquote contained a callout."""
+    # Look backwards to see if this closes a callout-containing blockquote
+    # Find matching blockquote_open
+    level = 1
+    j = idx - 1
+    while j >= 0 and level > 0:
+        if tokens[j].type == "blockquote_close":
+            level += 1
+        elif tokens[j].type == "blockquote_open":
+            level -= 1
+            if level == 0:
+                # Check if callout follows the opening blockquote
+                if (
+                    j + 1 < len(tokens)
+                    and tokens[j + 1].type == f"{OBSIDIAN_CALLOUT_PREFIX}_open"
+                ):
+                    return "</div>\n"
+                break
+        j -= 1
+    # Otherwise use default blockquote rendering
+    return self.renderToken(tokens, idx, options, env)
+
+
 def obsidian_callout_plugin(md: MarkdownIt) -> None:
     """Install the obsidian callout plugin."""
-
-    def _transform_to_callout(
-        tokens: list[Token],
-        start_index: int,
-        end_index: int,
-        alert_match: AlertMatch,
-    ) -> None:
-        """Transform blockquote tokens to Obsidian callout tokens."""
-        # Get first inline token to check if we need to strip the callout marker from it
-        first_inline = next(
-            (t for t in tokens[start_index : end_index + 1] if t.type == "inline"),
-            None,
-        )
-
-        # Extract fold status from the match
-        fold = alert_match.full_match.group("fold") if "fold" in alert_match.full_match.groupdict() else ""
-        folded = bool(fold)
-
-        # Get custom title from inline content (text on the same line as the marker)
-        custom_title = alert_match.inline_content.strip()
-
-        # If there's a custom title on the same line, we need to remove it from the first inline token
-        # Otherwise, the first inline token contains the actual content
-        if first_inline and custom_title:
-            # The first inline contains: marker + fold + custom_title + newline + actual content
-            # We need to strip the marker + fold + custom_title part
-            marker_with_fold = alert_match.marker
-            if fold:
-                marker_with_fold += fold
-            if custom_title:
-                marker_with_fold += " " + custom_title
-            # Remove the full marker line from the content
-            content = first_inline.content
-            if content.startswith(marker_with_fold):
-                first_inline.content = content[len(marker_with_fold):].lstrip()
-        elif first_inline:
-            # No custom title, just remove the marker and fold from content
-            marker_with_fold = alert_match.marker
-            if fold:
-                marker_with_fold += fold
-            content = first_inline.content
-            if content.startswith(marker_with_fold):
-                first_inline.content = content[len(marker_with_fold):].lstrip()
-
-        # Transform open token
-        open_token = tokens[start_index]
-        open_token.type = f"{OBSIDIAN_CALLOUT_PREFIX}_open"
-        open_token.tag = "div"
-        open_token.attrs = {
-            "data-callout-metadata": "",
-            "data-callout-fold": "",
-            "data-callout": alert_match.title.lower(),
-            "class": "callout",
-        }
-        # Store custom title in attrs for rendering
-        if custom_title:
-            open_token.attrs["data-callout-title"] = custom_title
-
-        if folded:
-            open_token.attrs["data-callout-fold"] = fold
-            open_token.attrs["class"] = "callout is-collapsible is-collapsed"
-
-        # Transform close token
-        close_token = tokens[end_index]
-        close_token.type = f"{OBSIDIAN_CALLOUT_PREFIX}_close"
-        close_token.tag = "div"
-
-        # Insert title token after the open token
-        # The title will be rendered from attrs
-        title_token = Token(f"{OBSIDIAN_CALLOUT_PREFIX}_title_open", "p", 1)
-        title_token.attrs = {"class": "callout-title"}
-        title_token.block = True
-
-        title_inline = Token("inline", "", 0)
-        title_inline.content = custom_title or alert_match.title.title()
-        title_inline.children = []
-
-        title_close = Token(f"{OBSIDIAN_CALLOUT_PREFIX}_title_close", "p", -1)
-
-        # Insert these tokens right after the open token
-        insert_pos = start_index + 1
-        tokens.insert(insert_pos, title_token)
-        tokens.insert(insert_pos + 1, title_inline)
-        tokens.insert(insert_pos + 2, title_close)
-
-        # If folded, add fold indicator tokens
-        if folded:
-            fold_open = Token(f"{OBSIDIAN_CALLOUT_PREFIX}_fold_open", "div", 1)
-            fold_open.attrs = {"class": "callout-fold is-collapsed"}
-            fold_close = Token(f"{OBSIDIAN_CALLOUT_PREFIX}_fold_close", "div", -1)
-            tokens.insert(insert_pos + 3, fold_open)
-            tokens.insert(insert_pos + 4, fold_close)
-
-    # Create and register the core rule using the generic factory
-    core_rule = blockquote_to_alert_factory(
-        OBSIDIAN_CALLOUT_PREFIX,
-        [PATTERN],
-        _transform_to_callout,
-        parse_nested=True,
-    )
-    md.core.ruler.after("block", OBSIDIAN_CALLOUT_PREFIX, core_rule)
+    md.block.ruler.before("blockquote", OBSIDIAN_CALLOUT_PREFIX, alert_logic)
 
     # Register renderers for all callout token types (only for HTML output)
     md.add_render_rule(
@@ -183,12 +205,28 @@ def obsidian_callout_plugin(md: MarkdownIt) -> None:
         f"{OBSIDIAN_CALLOUT_PREFIX}_title_close", _render_callout_close, fmt="html"
     )
     md.add_render_rule(
-        f"{OBSIDIAN_CALLOUT_PREFIX}_fold_open", _render_callout_open, fmt="html"
+        f"{OBSIDIAN_CALLOUT_PREFIX}_title_inner_open", _render_callout_open, fmt="html"
     )
     md.add_render_rule(
-        f"{OBSIDIAN_CALLOUT_PREFIX}_fold_close", _render_callout_close, fmt="html"
+        f"{OBSIDIAN_CALLOUT_PREFIX}_title_inner_close",
+        _render_callout_close,
+        fmt="html",
+    )
+    md.add_render_rule(
+        f"{OBSIDIAN_CALLOUT_PREFIX}_collapsed_open", _render_callout_open, fmt="html"
+    )
+    md.add_render_rule(
+        f"{OBSIDIAN_CALLOUT_PREFIX}_collapsed_close", _render_callout_close, fmt="html"
+    )
+    md.add_render_rule(
+        f"{OBSIDIAN_CALLOUT_PREFIX}_content_open", _render_callout_open, fmt="html"
+    )
+    md.add_render_rule(
+        f"{OBSIDIAN_CALLOUT_PREFIX}_content_close", _render_callout_close, fmt="html"
     )
 
-    # Add blockquote-to-div conversion for accessibility
-    blockquote_to_div_plugin = blockquote_to_div_plugin_factory(OBSIDIAN_CALLOUT_PREFIX)
-    blockquote_to_div_plugin(md)
+    # Override blockquote rendering to use div for callouts (accessibility)
+    md.add_render_rule("blockquote_open", _render_blockquote_with_callout, fmt="html")
+    md.add_render_rule(
+        "blockquote_close", _render_blockquote_close_with_callout, fmt="html"
+    )
