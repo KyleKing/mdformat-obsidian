@@ -1,3 +1,4 @@
+# ruff: noqa: RUF067
 """Ignore beartype warnings from tests."""
 
 from contextlib import suppress

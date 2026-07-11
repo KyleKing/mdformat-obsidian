@@ -24,30 +24,33 @@ repos:
       - id: pretty-format-json
         args: [--autofix, --indent=4]
       - id: trailing-whitespace
-        exclude: __snapshots__/.*\.ambr
+        exclude: __snapshots__/.*\.ambr|tests/format/fixtures/.+\.md
   - repo: https://github.com/executablebooks/mdformat
-    rev: 0.7.19
+    rev: 1.0.0
     hooks:
       - id: mdformat
         additional_dependencies:
-          - mdformat-mkdocs[recommended]>=3.0.0
-          - mdformat-gfm-alerts>=1.0.1
+          - mdformat-mkdocs[recommended-mdsf]>=5.1.1
+          - mdformat-gfm-alerts>=2.0.0
         args: [--wrap=no]
         exclude: tests/.+\.md
         stages: ["pre-commit"]
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.37.1
+    rev: v1.38.0
     hooks:
       - id: yamllint
         stages: ["pre-commit"]
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.35.0
+    rev: 0.37.1
     hooks:
       - id: check-github-workflows
         args: ["--verbose"]
         stages: ["pre-commit"]
+      - id: check-dependabot
+        args: ["--verbose"]
+        stages: ["pre-commit"]
   - repo: https://github.com/pappasam/toml-sort
-    rev: v0.24.3
+    rev: v0.24.4
     hooks:
       - id: toml-sort-fix
         stages: ["pre-commit"]

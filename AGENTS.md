@@ -44,6 +44,26 @@ tox -e type
 tox -e hook-min
 ```
 
+## One-Off Testing
+
+```bash
+# Create a development environment with local code installed
+tox devenv .venv
+
+# Test mdformat on inline content
+echo '- \[test\]: value' | .venv/bin/mdformat - --extension obsidian 2>&1
+
+# Test mdformat on a specific file
+.venv/bin/mdformat tests/pre-commit-test.md --extension obsidian
+
+# Run Python code with local package installed
+.venv/bin/python3 << 'PYTHON'
+import mdformat
+output = mdformat.text("- \[test\]: value", extensions={"obsidian"})
+print(output)
+PYTHON
+```
+
 ## Architecture
 
 ### Plugin System
@@ -87,8 +107,4 @@ Configuration can be passed via:
 
 ## Development Notes
 
-- This project uses `uv-build` as the build backend
-- Uses `tox` for test automation with multiple Python versions (3.10, 3.14)
-- Pre-commit is configured but the project now uses `prek` (faster alternative)
-- Python 3.10+ is required (see `requires-python` in `pyproject.toml`)
-- Version is defined in `mdformat_obsidian/__init__.py` as `__version__`
+- **Do not use `uv` commands**—there is no `uv.lock` file. Always use `tox` (installed via mise and available on PATH) which manages environments and dependencies.
