@@ -58,9 +58,16 @@ def tasklists_plugin(md: MarkdownIt) -> None:
 
     def fcn(state: StateCore) -> None:
         tokens = state.tokens
+        # When mdformat-gfm (or any plugin registering "github-tasklists") is
+        # active, leave standard GFM marks (" ", "x", "X") to its rule.
+        # Converting them here first replaces the checkbox with a bare
+        # "[ ] " html_inline lacking the "task-list-item-checkbox" class that
+        # mdformat-gfm's list_item renderer looks for, causing its paragraph
+        # postprocessor to defensively escape the rendered box to "\[ \]".
+        gfm_active = "github-tasklists" in state.md.core.ruler.get_active_rules()
         for idx in range(2, len(tokens) - 1):
             match = todo_mark(tokens, idx)
-            if match:
+            if match and not (gfm_active and match["mark"] in " xX"):
                 todoify(match, tokens[idx])
 
     md.core.ruler.after("inline", "obsidian-tasklists", fcn)
