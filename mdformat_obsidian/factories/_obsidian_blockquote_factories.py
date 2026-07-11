@@ -29,8 +29,10 @@ def new_token(
     kind: str,
 ) -> Generator[Token, None, None]:
     """Create scoped token."""
-    yield state.push(f"{name}_open", kind, 1)
-    state.push(f"{name}_close", kind, -1)
+    try:
+        yield state.push(f"{name}_open", kind, 1)
+    finally:
+        state.push(f"{name}_close", kind, -1)
 
 
 # FYI: Adapted from mdformat_admon.factories
@@ -79,7 +81,7 @@ def parse_possible_blockquote_admon_factory(
             re.compile(rf"{pat}(?P<custom_title>(?: |<br>)[^\n]+)?", re.IGNORECASE)
             for pat in patterns
         ]
-        match = next((_m for rx in regexes if (_m := rx.match(text))), None)
+        match = next((m for rx in regexes if (m := rx.match(text))), None)
         if not match:
             return False
 
