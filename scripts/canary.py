@@ -6,13 +6,13 @@ overwritten by 'copier update' once it exists (see '_skip_if_exists' in
 project. Add 'Repo(...)' entries there to enable it.
 """
 
-# ruff: noqa: T201, S603, S607
+# ruff:file-ignore[print, subprocess-without-shell-equals-true, start-process-with-partial-path]
 
 from __future__ import annotations
 
 import difflib
 import re
-import subprocess  # noqa: S404
+import subprocess  # ruff:ignore[suspicious-subprocess-import]
 import sys
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
@@ -240,7 +240,7 @@ def _print_results(results: list[CheckResult]) -> None:
 
 def main(argv: list[str]) -> None:
     """Run canary checks against all or a named subset of repos."""
-    from canary_repos import REPOS  # noqa: PLC0415
+    from canary_repos import REPOS  # ruff:ignore[import-outside-top-level]
 
     if not REPOS:
         print(
