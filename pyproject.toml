@@ -175,6 +175,7 @@ basepython = ["py314"]
 changedir = "{tox_root}"
 commands = [["python", "scripts/canary.py", {default = [], extend = true, replace = "posargs"}]]
 description = "Run mdformat idempotency checks against real downstream repos configured in scripts/canary_repos.py. Optionally specify: '-- some-repo another-repo' to test a subset."
+extras = ["recommended"]
 skip_install = false
 
 [tool.tox.env.cz]

@@ -8,6 +8,7 @@ from ._obsidian_callouts import (
     format_obsidian_callout_markup,
     obsidian_callout_plugin,
 )
+from ._obsidian_dollarmath import obsidian_dollarmath_plugin
 from ._obsidian_inline_footnotes import (
     format_footnote,
     format_footnote_block,
@@ -25,6 +26,7 @@ __all__ = (
     "format_footnote_ref",
     "format_obsidian_callout_markup",
     "obsidian_callout_plugin",
+    "obsidian_dollarmath_plugin",
     "obsidian_plugin",
     "tasklists_plugin",
 )

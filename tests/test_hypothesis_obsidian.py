@@ -13,6 +13,7 @@ from __future__ import annotations
 import os
 
 import mdformat
+import pytest
 from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
 
@@ -101,3 +102,25 @@ def test_standard_task_marks_never_escaped_with_gfm(mark: str, text: str) -> Non
         f"- [{mark}] {text}", extensions=["obsidian", "gfm", "tables"]
     )
     assert "\\[" not in output
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        pytest.param("- $$\n  a\n  $$\n", id="math-in-list-item"),
+        pytest.param("> $$\n> a\n> $$\n", id="math-in-blockquote"),
+        pytest.param(
+            "- $$\n  \\begin{align}\n  a \\\\\n  b\n  \\end{align}\n  $$\n",
+            id="multiline-math-in-list-item",
+        ),
+        pytest.param(
+            "1. $$a$$\n1. $$b$$ trailing\n   3) $$c$$\n",
+            id="math-same-line-close-with-trailing-text",
+        ),
+    ],
+)
+def test_dollarmath_idempotency_regressions(text: str) -> None:
+    """Regression test: block math nested in lists/blockquotes must stay idempotent."""
+    once = mdformat.text(text, extensions={"obsidian"})
+    twice = mdformat.text(once, extensions={"obsidian"})
+    assert once == twice

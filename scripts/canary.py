@@ -103,7 +103,7 @@ class CheckResult:
 # defeat clone caching. "cache" persists until `tox -e canary --recreate`.
 _CANARY_DIR = Path(__file__).parent.parent / ".tox" / "canary" / "cache"
 
-_EXTENSIONS = {"obsidian"}
+_EXTENSIONS = {"obsidian", "wikilink", "frontmatter"}
 
 
 def _clone_or_pull(repo: Repo, target_dir: Path) -> None:
