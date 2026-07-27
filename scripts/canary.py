@@ -1,9 +1,28 @@
 """Run mdformat idempotency checks against real downstream repos (canary testing).
 
-Repos to check are configured in 'scripts/canary_repos.py', which is not
+Repos to check are configured in 'scripts/canary_repos.json', which is not
 overwritten by 'copier update' once it exists (see '_skip_if_exists' in
 'copier.yml'). It starts empty: canary testing is entirely opt-in per
-project. Add 'Repo(...)' entries there to enable it.
+project. JSON (not a Python module of 'Repo(...)' calls) so this script can
+change the 'Repo' shape across template syncs without breaking every
+downstream project's frozen, un-synced entries; unknown or missing fields
+are ignored or defaulted rather than raising.
+
+To add or update an entry, run
+`git -C .tox/canary/cache/<name> show HEAD:.pre-commit-config.yaml` and check
+for a mdformat hook plus its args/excludes, then mirror them in the JSON
+entry so canary tracks what the downstream repo actually formats. Only
+'name' and 'url' are required.
+
+Example entry, appended to the 'repos' array in 'canary_repos.json'::
+
+    {
+        "name": "some-project",
+        "url": "https://github.com/some-org/some-project",
+        "patterns": ["docs/**/*.md"],
+        "excludes": ["docs/changelog.md"],
+        "options": {"wrap": 120}
+    }
 """
 
 # ruff:file-ignore[print, subprocess-without-shell-equals-true, start-process-with-partial-path]
@@ -11,6 +30,7 @@ project. Add 'Repo(...)' entries there to enable it.
 from __future__ import annotations
 
 import difflib
+import json
 import re
 import subprocess  # ruff:ignore[suspicious-subprocess-import]
 import sys
@@ -103,7 +123,24 @@ class CheckResult:
 # defeat clone caching. "cache" persists until `tox -e canary --recreate`.
 _CANARY_DIR = Path(__file__).parent.parent / ".tox" / "canary" / "cache"
 
+_REPOS_PATH = Path(__file__).parent / "canary_repos.json"
+
 _EXTENSIONS = {"obsidian", "wikilink", "frontmatter"}
+
+
+def _load_repos(path: Path) -> list[Repo]:
+    """Parse 'canary_repos.json', defaulting/ignoring fields this version doesn't know."""
+    data = json.loads(path.read_text(encoding="utf-8"))
+    return [
+        Repo(
+            name=entry["name"],
+            url=entry["url"],
+            patterns=tuple(entry.get("patterns", ())),
+            excludes=tuple(entry.get("excludes", ())),
+            options=entry.get("options", {}),
+        )
+        for entry in data.get("repos", [])
+    ]
 
 
 def _clone_or_pull(repo: Repo, target_dir: Path) -> None:
@@ -240,16 +277,16 @@ def _print_results(results: list[CheckResult]) -> None:
 
 def main(argv: list[str]) -> None:
     """Run canary checks against all or a named subset of repos."""
-    from canary_repos import REPOS  # ruff:ignore[import-outside-top-level]
+    all_repos = _load_repos(_REPOS_PATH)
 
-    if not REPOS:
+    if not all_repos:
         print(
-            "No canary repos configured in scripts/canary_repos.py. Skipping "
-            "(canary testing is opt-in; see the module docstring there)."
+            "No canary repos configured in scripts/canary_repos.json. Skipping "
+            "(canary testing is opt-in; see this module's docstring)."
         )
         return
 
-    repos = _resolve_repos(argv, REPOS)
+    repos = _resolve_repos(argv, all_repos)
 
     _CANARY_DIR.mkdir(parents=True, exist_ok=True)
     with ThreadPoolExecutor(max_workers=len(repos)) as pool:

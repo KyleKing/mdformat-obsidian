@@ -1,0 +1,21 @@
+{
+    "$comment": "Not overwritten by 'copier update' once this file exists (see canary.py's module docstring for how to add an entry, and copier.yml's '_skip_if_exists').",
+    "repos": [
+        {
+            "$comment": "Does not use mdformat. An idempotency smoke test against a real-world Obsidian vault (standard GFM task-list checkboxes).",
+            "name": "z3z1ma-vault",
+            "patterns": [
+                "notes/**/*.md"
+            ],
+            "url": "https://github.com/z3z1ma/vault"
+        },
+        {
+            "$comment": "Real-world Obsidian/Dataview vault exercising dollarmath (including '$$' nested in list items and blockquotes), wikilinks, and YAML/Dataview frontmatter.",
+            "name": "ryandeardorff-public-notes",
+            "patterns": [
+                "src/site/notes/**/*.md"
+            ],
+            "url": "https://github.com/ryandeardorff/public-notes"
+        }
+    ]
+}
