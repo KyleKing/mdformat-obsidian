@@ -1,0 +1,30 @@
+## 2026-08-01
+
+Stashed the pre-existing working-tree work before running this pass's gates. Stash message:
+`freshen 672bb50f: pre-existing WIP`. Not popped, not dropped. `git stash list` to find it,
+`git stash apply` (not pop) when you come back to it.
+
+Files in the stash and where each one left off:
+
+- `UPSTREAM_MDIT_PY_PLUGINS_FIX.md` (new) — a finished draft of the upstream bug report and
+  patch for `mdit-py-plugins`'s `math_block_dollar`, explicitly marked not yet filed. Next
+  step: clone `executablebooks/mdit-py-plugins`, confirm the repro fails on `main`, read
+  their `CONTRIBUTING.md`, then open the issue.
+- `mdformat_obsidian/mdit_plugins/_obsidian_dollarmath.py` — the only source change. It adds
+  an 8-line `TODO` block to the module docstring recording the removal plan for the local
+  guard: once a released `mdit-py-plugins` carries the upstream fix, bump the floor in
+  `pyproject.toml`, re-run the suite, and if
+  `tests/test_hypothesis_obsidian.py::test_dollarmath_idempotency_regressions` still passes,
+  delete this module and point `update_mdit` back at `mdit.use(dollarmath_plugin)`. The edit
+  is documentation only, no behavior change, and it is complete as written. What remains is
+  everything it depends on: the upstream issue is unfiled, so there is no issue URL to
+  reference in place of the local `UPSTREAM_MDIT_PY_PLUGINS_FIX.md` path, and the removal it
+  describes cannot happen until upstream merges and releases.
+- `README.md` — two additions: a note that the callout support also covers Hugo's extended
+  alert syntax, and a limitation entry saying an untitled callout renders an empty
+  `callout-title-inner` div. Next step: confirm the Hugo claim against a real Hugo render,
+  then commit alongside whatever release these describe.
+- `doing.txt` — the 2026-07-26 freshen notes, including a pointer to an older stash
+  (`7b7508199627248abf25fc0e8bd11f9f30bd1237`) holding an earlier copy of this same upstream
+  work. Two stashes now hold overlapping versions of it. Next step: apply one, confirm it is
+  the newer content, and drop the other.
