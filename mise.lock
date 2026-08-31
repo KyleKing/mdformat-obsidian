@@ -23,10 +23,40 @@ uvx_args = "--with tox-uv>=1.29.0"
 version = "3.10.15"
 backend = "core:python"
 
+[tools.python."platforms.linux-x64"]
+checksum = "sha256:25fb8e23cd3b82b748075a04fd18f3183cc7316c11d6f59eb4b0326843892600"
+url = "https://github.com/astral-sh/python-build-standalone/releases/download/20241016/cpython-3.10.15+20241016-x86_64-unknown-linux-gnu-install_only_stripped.tar.gz"
+provenance = "github-attestations"
+
+[tools.python."platforms.macos-arm64"]
+checksum = "sha256:fa79bd909bfeb627ffe66a8b023153495ece659e5e3b2ff56268535024db851c"
+url = "https://github.com/astral-sh/python-build-standalone/releases/download/20241016/cpython-3.10.15+20241016-aarch64-apple-darwin-install_only_stripped.tar.gz"
+provenance = "github-attestations"
+
 [[tools.python]]
 version = "3.14.0"
 backend = "core:python"
 
+[tools.python."platforms.linux-x64"]
+checksum = "sha256:66f385305ae0eefd6b65e2cf942bc91d943a61e26fb7581e029f760a2b04f393"
+url = "https://github.com/astral-sh/python-build-standalone/releases/download/20251120/cpython-3.14.0+20251120-x86_64-unknown-linux-gnu-install_only_stripped.tar.gz"
+provenance = "github-attestations"
+
+[tools.python."platforms.macos-arm64"]
+checksum = "sha256:5995f024e9c95ccbc87b9bb97152ad1ec9efcf9d76e0574cd37dd946afbea3c6"
+url = "https://github.com/astral-sh/python-build-standalone/releases/download/20251120/cpython-3.14.0+20251120-aarch64-apple-darwin-install_only_stripped.tar.gz"
+provenance = "github-attestations"
+
 [[tools.uv]]
 version = "0.9.11"
 backend = "aqua:astral-sh/uv"
+
+[tools.uv."platforms.linux-x64"]
+checksum = "sha256:817c0722b437b4b45b9a7e0231616a09db76bab1b8d178ba7a9680c690db19f0"
+url = "https://github.com/astral-sh/uv/releases/download/0.9.11/uv-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/astral-sh/uv/releases/assets/318993196"
+
+[tools.uv."platforms.macos-arm64"]
+checksum = "sha256:594d9f4cfbd21d5a2f34b0352bf423066a9dab1733c90b5d40e3e227506deb03"
+url = "https://github.com/astral-sh/uv/releases/download/0.9.11/uv-aarch64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/astral-sh/uv/releases/assets/318993133"
