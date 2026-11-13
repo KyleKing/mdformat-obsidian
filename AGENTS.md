@@ -98,8 +98,8 @@ The package implements mdformat's plugin interface with up to four exports in `_
 
 Configuration can be passed via:
 
-1. CLI argument, e.g. the scaffolded `--argument` flag
-1. TOML config file (`.mdformat.toml`):
+1. CLI arguments declared in `add_cli_argument_group` in plugin.py (the scaffold ships a `--argument` example flag)
+1. TOML config file (`.mdformat.toml`), with keys under `[plugin.obsidian]` matching the declared flags:
     ```toml
     [plugin.obsidian]
     argument = true
